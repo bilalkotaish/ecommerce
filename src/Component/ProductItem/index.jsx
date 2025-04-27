@@ -9,7 +9,7 @@ import { IoGitCompareOutline } from "react-icons/io5";
 export default function ProductItem() {
   return (
     <div className="productitem  bg-white rounded-lg border-2 border-[rgba(0,0,0,0.1)] shadow-lg overflow-hidden">
-      <div className="imagewrapper group/sub relative w-full  bg-white rounded-lg border-1 border-[rgba(0,0,0,0.1)] shadow-md">
+      <div className="imagewrapper group/sub  relative w-full  bg-white rounded-lg border-1 border-[rgba(0,0,0,0.1)] shadow-md">
         <Link to="/product/1">
           <div className="img h-[250px] overflow-hidden">
             <img

@@ -3,6 +3,8 @@ import "./App.css";
 import Header from "./Component/Header";
 import Home from "./Pages/Home";
 import Productlisting from "./Pages/Productlisting";
+import Footer from "./Component/Footer";
+import ProductDetails from "./Component/Productdetails";
 
 function App() {
   return (
@@ -16,7 +18,13 @@ function App() {
             exact={true}
             element={<Productlisting />}
           />
+          <Route
+            path="/productdetails"
+            exact={true}
+            element={<ProductDetails />}
+          />
         </Routes>
+        <Footer />
       </BrowserRouter>
     </>
   );

@@ -14,7 +14,7 @@ import "swiper/css";
 import "swiper/css/navigation";
 
 import ProductSlider from "../../Component/ProductSlider/index.jsx";
-import Footer from "../../Component/Footer/index.jsx";
+
 import Homev2 from "../../Component/homesliderv2/index.jsx";
 export default function Home() {
   const [value, setValue] = useState(0);
@@ -146,8 +146,6 @@ export default function Home() {
           </Swiper>
         </div>
       </section>
-
-      <Footer />
     </div>
   );
 }
