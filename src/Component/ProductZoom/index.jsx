@@ -23,16 +23,16 @@ export default function Productzoom() {
         <Swiper
           ref={usezoom1}
           direction={"vertical"}
-          slidesPerView={2} // Number of slides visible at a time
-          spaceBetween={20} // Space between slides
+          slidesPerView={4} // Number of slides visible at a time
+          spaceBetween={5} // Space between slides
           navigation={true} // Enable navigation buttons (next/prev)
           modules={[Navigation]} // Import navigation module
           className="zoomthumbs h-[500px]"
         >
           <SwiperSlide>
             <div
-              className={`item gap-2 rounded-md overlow-hidden cursor-pointer group ${
-                slideindex == 0 ? "opacity-1" : "opacity-30"
+              className={`item  rounded-md !overflow-hidden cursor-pointer group ${
+                slideindex === 0 ? "opacity-1" : "opacity-30"
               }`}
               onClick={() => {
                 Goto(0);
@@ -48,7 +48,9 @@ export default function Productzoom() {
 
           <SwiperSlide>
             <div
-              className="item item gap-2 rounded-md overlow-hidden cursor-pointer group "
+              className={`item  rounded-md !overflow-hidden cursor-pointer group ${
+                slideindex === 1 ? "opacity-1" : "opacity-30"
+              }`}
               onClick={() => {
                 Goto(1);
               }}
@@ -62,14 +64,16 @@ export default function Productzoom() {
           </SwiperSlide>
           <SwiperSlide>
             <div
-              className="item gap-2 rounded-md overlow-hidden cursor-pointer group"
+              className={`item  rounded-md !overflow-hidden cursor-pointer group ${
+                slideindex === 2 ? "opacity-1" : "opacity-30"
+              }`}
               onClick={() => {
                 Goto(2);
               }}
             >
               <img
                 src="https://serviceapi.spicezgold.com/download/1742463096956_hbhb2.jpg"
-                alt="Product 1"
+                alt="Product 3"
                 className=" w-full transition-full rounded-lg group-hover:scale-105"
               />
             </div>
@@ -77,14 +81,33 @@ export default function Productzoom() {
 
           <SwiperSlide>
             <div
-              className="item item gap-2 rounded-md overlow-hidden cursor-pointer group"
+              className={`item  rounded-md !overflow-hidden cursor-pointer group ${
+                slideindex === 3 ? "opacity-1" : "opacity-30"
+              }`}
               onClick={() => {
                 Goto(3);
               }}
             >
               <img
                 src="https://serviceapi.spicezgold.com/download/1742463096960_hbhb3.jpg"
-                alt="Product 2"
+                alt="Product 4"
+                className="w-full transition-full rounded-lg group-hover:scale-105"
+              />
+            </div>
+          </SwiperSlide>
+          
+          <SwiperSlide>
+            <div
+              className={`item  rounded-md !overflow-hidden cursor-pointer group ${
+                slideindex === 4 ? "opacity-1" : "opacity-30"
+              }`}
+              onClick={() => {
+                Goto(4);
+              }}
+            >
+              <img
+                src="https://serviceapi.spicezgold.com/download/1742463096960_hbhb3.jpg"
+                alt="Product 4"
                 className="w-full transition-full rounded-lg group-hover:scale-105"
               />
             </div>

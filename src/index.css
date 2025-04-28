@@ -243,7 +243,7 @@ nav button:hover {
   left: 0 !important;
   width: 100% !important;
   height: 30px !important;
-  border-radius: 0 !important;
+  border-radius: 0px !important;
   top: inherit !important;
 }
 
@@ -253,7 +253,7 @@ nav button:hover {
   left: 0 !important;
   width: 100% !important;
   height: 30px !important;
-  border-radius: 0 !important;
+  border-radius: 0px !important;
 }
 .zoomthumbs .swiper-button-prev:hover,
 .zoomthumbs .swiper-button-next:hover {
@@ -268,4 +268,18 @@ nav button:hover {
 }
 .zoomthumbs .swiper-button-prev::after {
   transform: rotate(90deg) !important;
+}
+.zoomthumbs .swiper-wrapper{
+  padding-top: 30px !important;
+  padding-bottom: 50px !important;
+}
+.content .actions button{
+  min-width:30px !important;
+  border: 1px solid rgba(0, 0, 0, 0.5) !important;
+}
+input[type=number]::-webkit-inner-spin button,
+input[type=number]::-webkit-outer-spin button{
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
 }
