@@ -95,7 +95,7 @@ export default function Productzoom() {
               />
             </div>
           </SwiperSlide>
-          
+
           <SwiperSlide>
             <div
               className={`item  rounded-md !overflow-hidden cursor-pointer group ${
@@ -114,7 +114,7 @@ export default function Productzoom() {
           </SwiperSlide>
         </Swiper>
       </div>
-      <div className="zoomcontainer w-[85%] h-[500px] overflow-hidden">
+      <div className="zoomcontainer w-[85%] h-[500px] overflow-hidden rounded-md">
         <Swiper
           slidesPerView={1}
           ref={usezoom2}

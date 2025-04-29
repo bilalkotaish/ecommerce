@@ -1,33 +1,108 @@
-import { BrowserRouter, Route, Routes } from "react-router-dom";
+import { BrowserRouter, Link, Route, Routes } from "react-router-dom";
 import "./App.css";
 import Header from "./Component/Header";
 import Home from "./Pages/Home";
 import Productlisting from "./Pages/Productlisting";
 import Footer from "./Component/Footer";
 import ProductDetails from "./Component/Productdetails";
+import { createContext } from "react";
+import { useState } from "react";
+import Button from "@mui/material/Button";
+import Dialog from "@mui/material/Dialog";
+import DialogActions from "@mui/material/DialogActions";
+import DialogContent from "@mui/material/DialogContent";
+import DialogContentText from "@mui/material/DialogContentText";
+import DialogTitle from "@mui/material/DialogTitle";
+import Productzoom from "./Component/ProductZoom";
+import { RiCloseLine } from "react-icons/ri";
+import ProductModal from "./Component/ProductModal";
+import Login from "./Pages/Login";
+import Register from "./Pages/Register";
+import Drawer from "@mui/material/Drawer";
+import { MdClose } from "react-icons/md";
+import CartPanel from "./Component/CartPanel";
+
+const myContext = createContext();
 
 function App() {
+  const [openProduct, setOpenProduct] = useState(false);
+  const [maxWidth, setMaxWidth] = useState("lg");
+  const [fullWidth, setFullWidth] = useState(true);
+  const [openCartPanel, setopenCartPanel] = useState(false);
+
+  const toggleCartPanel = (newOpen) => () => {
+    setopenCartPanel(newOpen);
+  };
+
+  const handleClickOpen = () => {
+    setOpenProduct(true);
+  };
+
+  const handleClose = () => {
+    setOpenProduct(false);
+  };
+  const values = {
+    setOpenProduct,
+    setopenCartPanel,
+    openCartPanel,
+    toggleCartPanel,
+  };
   return (
     <>
       <BrowserRouter>
-        <Header />
-        <Routes>
-          <Route path="/" exact={true} element={<Home />} />
-          <Route
-            path="/productlist"
-            exact={true}
-            element={<Productlisting />}
-          />
-          <Route
-            path="/productdetails"
-            exact={true}
-            element={<ProductDetails />}
-          />
-        </Routes>
-        <Footer />
+        <myContext.Provider value={values}>
+          <Header />
+          <Routes>
+            <Route path="/" exact={true} element={<Home />} />
+            <Route
+              path="/productlist"
+              exact={true}
+              element={<Productlisting />}
+            />
+            <Route
+              path="/productdetails"
+              exact={true}
+              element={<ProductDetails />}
+            />
+            <Route path="/Login" exact={true} element={<Login />} />
+            <Route path="/Register" exact={true} element={<Register />} />
+          </Routes>
+          <Footer />
+        </myContext.Provider>
       </BrowserRouter>
+      <Button variant="outlined" onClick={handleClickOpen}>
+        Open alert dialog
+      </Button>
+      <Dialog
+        open={openProduct}
+        onClose={handleClose}
+        fullWidth={fullWidth}
+        maxWidth={maxWidth}
+        aria-labelledby="alert-dialog-title"
+        aria-describedby="alert-dialog-description"
+        className="productdetailsmodal"
+      >
+        <DialogContent>
+          <div className="flex items-center w-full productdetailsmodalcontainer relative">
+            <Button
+              onClick={handleClose}
+              className="!w-[40px] !h-[40px] !min-w-[40px] !text-[25px] !rounded-full !text-black !absolute top-[15px] right-[0px]"
+            >
+              {" "}
+              <RiCloseLine />
+            </Button>
+            <div className="col-1 w-[40%]">
+              <Productzoom />
+            </div>
+            <div className="col-2 w-[60%] py-2 px-6 pr-1">
+              <ProductModal />
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
     </>
   );
 }
 
 export default App;
+export { myContext };

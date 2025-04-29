@@ -5,14 +5,17 @@ import { IoMdHeartEmpty } from "react-icons/io";
 import { IoExpandOutline, IoGitCompareOutline } from "react-icons/io5";
 import { MdOutlineAddShoppingCart } from "react-icons/md";
 import Tooltip from "@mui/material/Tooltip";
+import { myContext } from "../../App";
+import { useContext } from "react";
 
 export default function ProductItemListView() {
+  const context = useContext(myContext);
   return (
     <div className="productitem flex bg-white rounded-lg border-2 border-[rgba(0,0,0,0.1)] shadow-lg overflow-hidden w-full">
       {/* Image Section */}
       <div className="imagewrapper group/sub relative w-[25%] min-w-[250px] bg-white rounded-l-lg border-r border-[rgba(0,0,0,0.1)] overflow-hidden">
         <Link to="/product/1">
-          <div className="img h-full max-h-[250px] overflow-hidden">
+          <div className="img h-[300px] overflow-hidden">
             <img
               src="https://serviceapi.spicezgold.com/download/1742463096956_hbhb2.jpg"
               alt="product"
@@ -38,7 +41,7 @@ export default function ProductItemListView() {
           </Tooltip>
           <Tooltip title="View" arrow>
             <Button className="!w-[35px] !h-[35px] !p-2 !rounded-full !bg-white hover:!bg-primary text-black hover:text-white">
-              <IoExpandOutline />
+              <IoExpandOutline onClick={() => context.setOpenProduct(true)} />
             </Button>
           </Tooltip>
           <Tooltip title="Compare" arrow>

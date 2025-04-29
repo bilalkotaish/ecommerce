@@ -6,7 +6,11 @@ import { CiShare1 } from "react-icons/ci";
 import { IoExpandOutline } from "react-icons/io5";
 import Tooltip from "@mui/material/Tooltip";
 import { IoGitCompareOutline } from "react-icons/io5";
+import { useContext } from "react";
+import { myContext } from "../../App";
 export default function ProductItem() {
+  const context = useContext(myContext);
+
   return (
     <div className="productitem  bg-white rounded-lg border-2 border-[rgba(0,0,0,0.1)] shadow-lg overflow-hidden">
       <div className="imagewrapper group/sub  relative w-full  bg-white rounded-lg border-1 border-[rgba(0,0,0,0.1)] shadow-md">
@@ -41,7 +45,10 @@ export default function ProductItem() {
             className="absolute top-2 right-2  p-2 !rounded-full w-[35px] h-[35px] 
           !bg-white text-black hover:!bg-primary hover:text-white transition-all duration-300 group"
           >
-            <IoExpandOutline className="text-[18px] text-gray-500 group-hover:text-white" />
+            <IoExpandOutline
+              onClick={() => context.setOpenProduct(true)}
+              className="text-[18px] text-gray-500 group-hover:text-white"
+            />
           </Button>
           <Button
             className="absolute top-2 right-2  p-2 !rounded-full w-[35px] h-[35px] 

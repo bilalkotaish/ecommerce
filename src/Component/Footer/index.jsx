@@ -14,8 +14,14 @@ import { FaFacebookF } from "react-icons/fa";
 import { FiYoutube } from "react-icons/fi";
 import { RiTwitterXFill } from "react-icons/ri";
 import { FaGithub } from "react-icons/fa";
+import { useContext } from "react";
+import { myContext } from "../../App";
+import Drawer from "@mui/material/Drawer";
+import CartPanel from "../CartPanel";
+import { MdClose } from "react-icons/md";
 
 export default function Footer() {
+  const context = useContext(myContext);
   return (
     <>
       <footer>
@@ -281,6 +287,24 @@ export default function Footer() {
           </div>
         </div>
       </div>
+
+      {/* {cart panel} */}
+      <Drawer
+        open={context.openCartPanel}
+        onClose={context.toggleCartPanel(false)}
+        anchor="right"
+        className=" cartpanel"
+      >
+        <div className="flex items-center justify-between py-3 px-4 gap-3 border-b border-[rgba(0,0,0,0.1)]">
+          <h4>Shopping Cart</h4>
+          <MdClose
+            className="text-[20px] cursor-pointer"
+            onClick={context.toggleCartPanel(false)}
+          />
+        </div>
+
+        <CartPanel />
+      </Drawer>
     </>
   );
 }

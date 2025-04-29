@@ -43,7 +43,10 @@ export default function Navigation() {
                 </Link>
               </li>
               <li className="list-none relative group ">
-                <Link to="/" className="transition text-[13px] font-[500]">
+                <Link
+                  to="/productlist"
+                  className="transition text-[13px] font-[500]"
+                >
                   <Button className="w-full !py-4  !text-left flex !justify-start">
                     Fashion
                   </Button>
