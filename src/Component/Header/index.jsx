@@ -12,6 +12,20 @@ import { Tooltip } from "@mui/material";
 import Navigation from "./Navigation";
 import { useContext } from "react";
 import { myContext } from "../../App";
+import { FaRegUser } from "react-icons/fa";
+import Button from "@mui/material/Button";
+
+import Box from "@mui/material/Box";
+import Avatar from "@mui/material/Avatar";
+import Menu from "@mui/material/Menu";
+import MenuItem from "@mui/material/MenuItem";
+import ListItemIcon from "@mui/material/ListItemIcon";
+import Divider from "@mui/material/Divider";
+import Typography from "@mui/material/Typography";
+import { BsBagCheck } from "react-icons/bs";
+import { GoChecklist } from "react-icons/go";
+import { RiLogoutBoxLine } from "react-icons/ri";
+import { useState } from "react";
 
 const StyledBadge = styled(Badge)(({ theme }) => ({
   "& .MuiBadge-badge": {
@@ -24,6 +38,14 @@ const StyledBadge = styled(Badge)(({ theme }) => ({
 
 export default function Header() {
   const context = useContext(myContext);
+  const [anchorEl, setAnchorEl] = useState(null);
+  const open = Boolean(anchorEl);
+  const handleClick = (event) => {
+    setAnchorEl(event.currentTarget);
+  };
+  const handleClose = () => {
+    setAnchorEl(null);
+  };
   return (
     <div>
       <header className="bg-white">
@@ -67,26 +89,129 @@ export default function Header() {
                 <img src={logo} className="w-[140px] h-auto"></img>
               </Link>
             </div>
-            <div className="col2 w-[45%]">
+            <div className="col2 w-[40%] pt-2">
               <Search />
             </div>
-            <div className="col3 w-[30%] flex items-center pl-7">
+
+            <div className="col3 w-[35%] flex items-center pl-7">
               <ul className="flex items-center gap-3 w-full justify-end">
-                <li className="list-none">
-                  <Link
-                    to="/Login"
-                    className="transition-text-[14px] link font-[500]"
-                  >
-                    login
-                  </Link>{" "}
-                  /
-                  <Link
-                    to="/register"
-                    className="transition-text-[14px] link  font-[500]"
-                  >
-                    register
-                  </Link>
-                </li>
+                {context.islogin === false ? (
+                  <li className="list-none">
+                    <Link
+                      to="/Login"
+                      className="transition-text-[14px] link font-[500]"
+                    >
+                      login
+                    </Link>{" "}
+                    /
+                    <Link
+                      to="/register"
+                      className="transition-text-[14px] link  font-[500]"
+                    >
+                      register
+                    </Link>
+                  </li>
+                ) : (
+                  <>
+                    <Button
+                      className="myaccountwrapper flex items-center gap-3"
+                      onClick={handleClick}
+                    >
+                      <Button className="!w-[40px] !h-[40px] !text-[20px] !text-gray-600 !rounded-full !min-w-[40px]">
+                        {" "}
+                        <FaRegUser />
+                      </Button>
+
+                      <div className="info flex  flex-col">
+                        <h4 className="text-[15px] leading-3 mb-0 !text-[rgba(0,0,0,0.7)] font-[500] capitalize text-left justify-start">
+                          {" "}
+                          Bilal Kotaish
+                        </h4>
+                        <span className="text-[15px] mb-0 !text-[rgba(0,0,0,0.7)] font-[500] capitalize text-left justify-start">
+                          Bilalkotaish@gmail.com
+                        </span>
+                      </div>
+                    </Button>
+
+                    <Menu
+                      anchorEl={anchorEl}
+                      id="account-menu"
+                      open={open}
+                      onClose={handleClose}
+                      onClick={handleClose}
+                      slotProps={{
+                        paper: {
+                          elevation: 0,
+                          sx: {
+                            overflow: "visible",
+                            filter: "drop-shadow(0px 2px 8px rgba(0,0,0,0.32))",
+                            mt: 1.5,
+                            "& .MuiAvatar-root": {
+                              width: 32,
+                              height: 32,
+                              ml: -0.5,
+                              mr: 1,
+                            },
+                            "&::before": {
+                              content: '""',
+                              display: "block",
+                              position: "absolute",
+                              top: 0,
+                              right: 14,
+                              width: 10,
+                              height: 10,
+                              bgcolor: "background.paper",
+                              transform: "translateY(-50%) rotate(45deg)",
+                              zIndex: 0,
+                            },
+                          },
+                        },
+                      }}
+                      transformOrigin={{ horizontal: "left", vertical: "top" }}
+                      anchorOrigin={{ horizontal: "left", vertical: "bottom" }}
+                    >
+                      <Link to="/myaccount" className="w-full block">
+                        <MenuItem
+                          onClick={handleClose}
+                          className="flex gap-2 !py-2"
+                        >
+                          <FaRegUser className="text-[14px]" />{" "}
+                          <span className="text-[14px]">My account</span>
+                        </MenuItem>
+                      </Link>
+
+                      <Link to="/myorders" className="w-full block">
+                        <MenuItem
+                          onClick={handleClose}
+                          className="flex gap-2 !py-2"
+                        >
+                          <BsBagCheck className="text-[14px]" />{" "}
+                          <span className="text-[14px]">Orders</span>
+                        </MenuItem>
+                      </Link>
+
+                      <Link to="/myList" className="w-full block">
+                        <MenuItem
+                          onClick={handleClose}
+                          className="flex gap-2 !py-2"
+                        >
+                          <GoChecklist className="text-[14px]" />{" "}
+                          <span className="text-[14px]">My List </span>
+                        </MenuItem>
+                      </Link>
+
+                      <Link to="/logout" className="w-full block">
+                        <MenuItem
+                          onClick={handleClose}
+                          className="flex gap-2 !py-2"
+                        >
+                          <RiLogoutBoxLine className="text-[14px]" />{" "}
+                          <span className="text-[14px]"> Logout</span>
+                        </MenuItem>
+                      </Link>
+                    </Menu>
+                  </>
+                )}
 
                 <li>
                   <Tooltip title="compare">

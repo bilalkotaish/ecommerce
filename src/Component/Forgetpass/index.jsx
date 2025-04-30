@@ -7,23 +7,11 @@ import { Link, useNavigate } from "react-router-dom";
 import { FcGoogle } from "react-icons/fc";
 import { myContext } from "../../App";
 
-export default function Login() {
+export default function forgetPassword() {
   const [ShowPassword, setShowPasword] = useState(false);
+  const [ShowPassword2, setShowPasword2] = useState(false);
   const context = useContext(myContext);
-
-  const [formfield, setformfield] = useState({
-    email: "",
-    password: "",
-  });
   const history = useNavigate();
-
-  const forgetPassword = () => {
-    context.Alertbox(
-      "success",
-      "The verification code is sent to your email address"
-    );
-    history("/verify");
-  };
 
   return (
     <>
@@ -31,31 +19,21 @@ export default function Login() {
         <div className="container">
           <div className="card shadow-md w-[400px] m-auto rounded-md bg-white p-5 px-12">
             <img
-              src="src/assets/logo.png"
-              className="w-[140px] mx-auto h-auto"
+              src="src\assets\RESET.png"
+              className="w-[80px] mx-auto h-auto mb-2"
             />
 
-            <h3 className=" !text-center text-[18px] font-[600]">
+            <h3 className=" !text-center text-[18px] mb-5 font-[600]">
               {" "}
-              Login To Your Account
+              Reset Your Password
             </h3>
             <form className="w-full">
-              <div className="formgroup w-full mb-5 mt-5">
-                <TextField
-                  id="EmailId*"
-                  type="email"
-                  label="Email"
-                  variant="outlined"
-                  className="w-full"
-                  name="email"
-                />
-              </div>
               <div className="formgroup w-full mb-3 relative">
                 {ShowPassword === true ? (
                   <TextField
                     id="Password"
                     type="text"
-                    label="Password"
+                    label="New Password"
                     variant="outlined"
                     className="w-full"
                     name="password"
@@ -64,12 +42,11 @@ export default function Login() {
                   <TextField
                     id="Password"
                     type="password"
-                    label="Password"
+                    label="New Password"
                     variant="outlined"
                     className="w-full"
                   />
                 )}
-
                 <Button
                   className="!absolute  !top-[10px] !right-[10px] !z-50 !w-[35px] !min-w-[35px] !h-[35px]
               !rounded-full !text-black"
@@ -82,39 +59,44 @@ export default function Login() {
                   )}
                 </Button>
               </div>
+              <div className="formgroup w-full mb-3 relative">
+                {ShowPassword2 === true ? (
+                  <TextField
+                    id="confirmPassword"
+                    type="text"
+                    label="Confirm Password"
+                    variant="outlined"
+                    className="w-full"
+                    name="password"
+                  />
+                ) : (
+                  <TextField
+                    id="confirmPassword"
+                    type="password"
+                    label="Confirm Password"
+                    variant="outlined"
+                    className="w-full"
+                  />
+                )}
 
-              <Link to="/verify">
-                <a
-                  className="link text-[13px] text-gray-500 cursor-pointer "
-                  onClick={() => {
-                    forgetPassword();
-                  }}
+                <Button
+                  className="!absolute  !top-[10px] !right-[10px] !z-50 !w-[35px] !min-w-[35px] !h-[35px]
+              !rounded-full !text-black"
+                  onClick={() => setShowPasword2(!ShowPassword2)}
                 >
-                  Forget Password?
-                </a>
-              </Link>
-
-              <div className="flex !items-center mt-3 mb-3">
-                <Button className="btn-org w-full">Login</Button>
+                  {ShowPassword2 === true ? (
+                    <IoMdEye className="text-[20px]" />
+                  ) : (
+                    <IoMdEyeOff />
+                  )}
+                </Button>
               </div>
 
-              <h2 className="text-[13px]  text-gray-700 cursor-pointer">
-                New here?
-                <Link
-                  to="/register"
-                  className="link text-[13px]  text-gray-700 cursor-pointer"
-                >
-                  Create your account!
+              <div className="flex !items-center mt-3 mb-3">
+                <Link to="/login">
+                  <Button className="btn-org w-full">Reset Password</Button>
                 </Link>
-              </h2>
-
-              <p className="text-[14px] mt-3 !text-center  ">
-                {" "}
-                Or Continue With Social Accounts
-              </p>
-              <Button className="w-full !mt-3 gap-3 !bg-[#f1f1f1] !text-black">
-                <FcGoogle /> Sign In With Google
-              </Button>
+              </div>
             </form>
           </div>
         </div>

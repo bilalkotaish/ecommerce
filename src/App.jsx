@@ -21,6 +21,12 @@ import Register from "./Pages/Register";
 import Drawer from "@mui/material/Drawer";
 import { MdClose } from "react-icons/md";
 import CartPanel from "./Component/CartPanel";
+import Cart from "./Component/Cart";
+import Emailverify from "./Pages/verification";
+import toast, { Toaster } from "react-hot-toast";
+import Forgetpass from "./Component/Forgetpass";
+import Checkout from "./Pages/Checkout";
+import Myaccount from "./Pages/Myaccount";
 
 const myContext = createContext();
 
@@ -29,6 +35,16 @@ function App() {
   const [maxWidth, setMaxWidth] = useState("lg");
   const [fullWidth, setFullWidth] = useState(true);
   const [openCartPanel, setopenCartPanel] = useState(false);
+  const [islogin, setislogin] = useState(true);
+
+  const Alertbox = (status, msg) => {
+    if (status === "success") {
+      toast.success(msg);
+    }
+    if (status === "error") {
+      toast.error(msg);
+    }
+  };
 
   const toggleCartPanel = (newOpen) => () => {
     setopenCartPanel(newOpen);
@@ -46,6 +62,9 @@ function App() {
     setopenCartPanel,
     openCartPanel,
     toggleCartPanel,
+    Alertbox,
+    islogin,
+    setislogin,
   };
   return (
     <>
@@ -66,10 +85,21 @@ function App() {
             />
             <Route path="/Login" exact={true} element={<Login />} />
             <Route path="/Register" exact={true} element={<Register />} />
+            <Route path="/Cart" exact={true} element={<Cart />} />
+            <Route path="/verify" exact={true} element={<Emailverify />} />
+            <Route
+              path="/Resetpassword"
+              exact={true}
+              element={<Forgetpass />}
+            />
+            <Route path="/checkout" exact={true} element={<Checkout />} />
+            <Route path="/myaccount" exact={true} element={<Myaccount />} />
           </Routes>
           <Footer />
         </myContext.Provider>
       </BrowserRouter>
+
+      <Toaster />
       <Button variant="outlined" onClick={handleClickOpen}>
         Open alert dialog
       </Button>

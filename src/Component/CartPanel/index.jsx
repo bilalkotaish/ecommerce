@@ -67,7 +67,7 @@ export default function CartPanel() {
             </Button>
           </Link>
           <Link to="/checkout" className="w-[50%] d-block">
-            <Button className="btn-org w-full  flex-1 !h-[50px] !text-[16px] font-semibold">
+            <Button className="btn-org btn-border w-full  flex-1 !h-[50px] !text-[16px] font-semibold">
               Checkout
             </Button>
           </Link>
