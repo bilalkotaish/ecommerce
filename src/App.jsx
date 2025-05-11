@@ -5,7 +5,7 @@ import Home from "./Pages/Home";
 import Productlisting from "./Pages/Productlisting";
 import Footer from "./Component/Footer";
 import ProductDetails from "./Component/Productdetails";
-import { createContext } from "react";
+import { createContext, useEffect } from "react";
 import { useState } from "react";
 import Button from "@mui/material/Button";
 import Dialog from "@mui/material/Dialog";
@@ -30,15 +30,18 @@ import Myaccount from "./Pages/Myaccount";
 import Listitems from "./Component/Mylist/Listitems";
 import MyList from "./Component/Mylist";
 import Orders from "./Pages/Orders";
+import { fetchData } from "./utils/api";
 
-const myContext = createContext();
+export const myContext = createContext();
 
 function App() {
   const [openProduct, setOpenProduct] = useState(false);
   const [maxWidth, setMaxWidth] = useState("lg");
   const [fullWidth, setFullWidth] = useState(true);
   const [openCartPanel, setopenCartPanel] = useState(false);
-  const [islogin, setislogin] = useState(true);
+  const [islogin, setislogin] = useState(false);
+  const [userData, setuserData] = useState(null);
+  const apiurl = import.meta.env.VITE_API_URL;
 
   const Alertbox = (status, msg) => {
     if (status === "success") {
@@ -52,6 +55,18 @@ function App() {
   const toggleCartPanel = (newOpen) => () => {
     setopenCartPanel(newOpen);
   };
+
+  useEffect(() => {
+    const token = localStorage.getItem("accesstoken");
+    // if (token !== null || token !== undefined || token !== "") {
+    //   setislogin(true);
+    fetchData(`/api/user/userdetails?token=${token}`).then((res) => {
+      setuserData(res.data);
+    });
+    // } else {
+    //   setislogin(false);
+    // }
+  });
 
   const handleClickOpen = () => {
     setOpenProduct(true);
@@ -68,6 +83,8 @@ function App() {
     Alertbox,
     islogin,
     setislogin,
+    setuserData,
+    userData,
   };
   return (
     <>
@@ -140,4 +157,4 @@ function App() {
 }
 
 export default App;
-export { myContext };
+//export { myContext };

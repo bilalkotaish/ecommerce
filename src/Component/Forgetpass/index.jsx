@@ -6,12 +6,69 @@ import { useContext, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { FcGoogle } from "react-icons/fc";
 import { myContext } from "../../App";
+import CircularProgress from "@mui/material/CircularProgress";
+import { postData } from "../../utils/api";
 
 export default function forgetPassword() {
   const [ShowPassword, setShowPasword] = useState(false);
+  const [isLoading, setisLoading] = useState(false);
+
   const [ShowPassword2, setShowPasword2] = useState(false);
+  const [formfield, setformfield] = useState({
+    email: localStorage.getItem("userEmail"),
+    newPassword: "",
+    confirmPassword: "",
+  });
   const context = useContext(myContext);
   const history = useNavigate();
+  const validValue = Object.values(formfield).every((el) => el);
+
+  const onChangeInput = (e) => {
+    const { name, value } = e.target;
+    setformfield(() => {
+      return {
+        ...formfield,
+        [name]: value,
+      };
+    });
+  };
+  const handlesubmit = (e) => {
+    setisLoading(true);
+    e.preventDefault();
+
+    if (formfield.newPassword === "") {
+      context.Alertbox("error", "Please Provide Your Password");
+      setisLoading(false);
+      return false;
+    }
+
+    if (formfield.confirmPassword === "") {
+      context.Alertbox("error", "Please Provide Your Confirm Password");
+      setisLoading(false);
+      return false;
+    }
+    if (formfield.confirmPassword !== formfield.newPassword) {
+      context.Alertbox("error", "Password doesn't match");
+      setisLoading(false);
+      return false;
+    }
+    postData(`/api/user/reset-password`, {
+      email: localStorage.getItem("userEmail"),
+      password: formfield.newPassword,
+      confirmPassword: formfield.confirmPassword,
+    }).then((res) => {
+      if (res.error === false) {
+        console.log(res);
+        localStorage.removeItem("userEmail");
+        localStorage.removeItem("action-type");
+        context.Alertbox("success", "Password Reset Successfully");
+        setisLoading(false);
+        history("/login");
+      } else {
+        context.Alertbox("error", res.message);
+      }
+    });
+  };
 
   return (
     <>
@@ -27,26 +84,19 @@ export default function forgetPassword() {
               {" "}
               Reset Your Password
             </h3>
-            <form className="w-full">
+            <form className="w-full" onSubmit={handlesubmit}>
               <div className="formgroup w-full mb-3 relative">
-                {ShowPassword === true ? (
-                  <TextField
-                    id="Password"
-                    type="text"
-                    label="New Password"
-                    variant="outlined"
-                    className="w-full"
-                    name="password"
-                  />
-                ) : (
-                  <TextField
-                    id="Password"
-                    type="password"
-                    label="New Password"
-                    variant="outlined"
-                    className="w-full"
-                  />
-                )}
+                <TextField
+                  id="newPassword"
+                  type={ShowPassword ? "text" : "password"}
+                  name="newPassword"
+                  disabled={isLoading}
+                  value={formfield.newPassword}
+                  label="New Password"
+                  variant="outlined"
+                  className="w-full"
+                  onChange={onChangeInput}
+                />
                 <Button
                   className="!absolute  !top-[10px] !right-[10px] !z-50 !w-[35px] !min-w-[35px] !h-[35px]
               !rounded-full !text-black"
@@ -60,24 +110,17 @@ export default function forgetPassword() {
                 </Button>
               </div>
               <div className="formgroup w-full mb-3 relative">
-                {ShowPassword2 === true ? (
-                  <TextField
-                    id="confirmPassword"
-                    type="text"
-                    label="Confirm Password"
-                    variant="outlined"
-                    className="w-full"
-                    name="password"
-                  />
-                ) : (
-                  <TextField
-                    id="confirmPassword"
-                    type="password"
-                    label="Confirm Password"
-                    variant="outlined"
-                    className="w-full"
-                  />
-                )}
+                <TextField
+                  id="confirmPassword"
+                  type={ShowPassword2 ? "text" : "password"}
+                  name="confirmPassword"
+                  disabled={isLoading}
+                  value={formfield.confirmPassword}
+                  label="confirm Password"
+                  variant="outlined"
+                  className="w-full"
+                  onChange={onChangeInput}
+                />
 
                 <Button
                   className="!absolute  !top-[10px] !right-[10px] !z-50 !w-[35px] !min-w-[35px] !h-[35px]
@@ -93,9 +136,14 @@ export default function forgetPassword() {
               </div>
 
               <div className="flex !items-center mt-3 mb-3">
-                <Link to="/login">
-                  <Button className="btn-org w-full">Reset Password</Button>
-                </Link>
+                <Button type="submit" className="btn-org w-full gap-3">
+                  Reset Password
+                  {isLoading === true ? (
+                    <CircularProgress color="inherit" />
+                  ) : (
+                    ""
+                  )}
+                </Button>
               </div>
             </form>
           </div>

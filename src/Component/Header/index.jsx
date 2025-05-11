@@ -26,6 +26,7 @@ import { BsBagCheck } from "react-icons/bs";
 import { GoChecklist } from "react-icons/go";
 import { RiLogoutBoxLine } from "react-icons/ri";
 import { useState } from "react";
+import { fetchData, postData } from "../../utils/api";
 
 const StyledBadge = styled(Badge)(({ theme }) => ({
   "& .MuiBadge-badge": {
@@ -45,6 +46,21 @@ export default function Header() {
   };
   const handleClose = () => {
     setAnchorEl(null);
+  };
+  const logout = () => {
+    setAnchorEl(null);
+    fetchData(`/api/user/Logout?token=${localStorage.getItem("accesstoken")}`, {
+      withCredentials: true,
+    }).then((res) => {
+      console.log(res);
+      if (res.error === false) {
+        localStorage.removeItem("accesstoken");
+        localStorage.removeItem("refreshtoken");
+        context.setislogin(false);
+      } else {
+        context.setislogin(true);
+      }
+    });
   };
   return (
     <div>
@@ -125,10 +141,10 @@ export default function Header() {
                       <div className="info flex  flex-col">
                         <h4 className="text-[15px] leading-3 mb-0 !text-[rgba(0,0,0,0.7)] font-[500] capitalize text-left justify-start">
                           {" "}
-                          Bilal Kotaish
+                          {context?.userData?.name}
                         </h4>
-                        <span className="text-[15px] mb-0 !text-[rgba(0,0,0,0.7)] font-[500] capitalize text-left justify-start">
-                          Bilalkotaish@gmail.com
+                        <span className="text-[15px] mb-0 !text-[rgba(0,0,0,0.7)] font-[500] lowercase  text-left justify-start">
+                          {context?.userData.email}
                         </span>
                       </div>
                     </Button>
@@ -200,15 +216,10 @@ export default function Header() {
                         </MenuItem>
                       </Link>
 
-                      <Link to="/logout" className="w-full block">
-                        <MenuItem
-                          onClick={handleClose}
-                          className="flex gap-2 !py-2"
-                        >
-                          <RiLogoutBoxLine className="text-[14px]" />{" "}
-                          <span className="text-[14px]"> Logout</span>
-                        </MenuItem>
-                      </Link>
+                      <MenuItem onClick={logout} className="flex gap-2 !py-2">
+                        <RiLogoutBoxLine className="text-[14px]" />{" "}
+                        <span className="text-[14px]"> Logout</span>
+                      </MenuItem>
                     </Menu>
                   </>
                 )}

@@ -1,5 +1,16 @@
+import { useEffect } from "react";
 import OtpBox from "../../Component/OtpBox";
+import { postData } from "../../utils/api";
 export default function Emailverify() {
+  const userEmail = localStorage.getItem("userEmail");
+
+  // useEffect(() => {
+  //   if (userEmail) {
+  //     postData("/api/user/verify", { email: userEmail ,}).then((res) =>
+  //       console.log(res)
+  //     );
+  //   }
+  // }, [userEmail]);
   return (
     <section className="section py-10">
       <div className="container">
@@ -16,7 +27,7 @@ export default function Emailverify() {
           <p className="text-center mt-2">
             {" "}
             Otp Sent to:{" "}
-            <span className="text-primary font-[600]">Bilal@gmail.com</span>
+            <span className="text-primary font-[600]">{userEmail}</span>
           </p>
 
           <OtpBox />

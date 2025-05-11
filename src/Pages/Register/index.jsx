@@ -2,12 +2,69 @@ import TextField from "@mui/material/TextField";
 import { IoMdEye } from "react-icons/io";
 import { IoMdEyeOff } from "react-icons/io";
 import Button from "@mui/material/Button";
-import { useState } from "react";
+import { useContext, useState } from "react";
 import { Link } from "react-router-dom";
 import { FcGoogle } from "react-icons/fc";
+import { postData } from "../../utils/api";
+import { myContext } from "../../App";
+import CircularProgress from "@mui/material/CircularProgress";
+import { useNavigate } from "react-router-dom";
 
 export default function Register() {
+  const context = useContext(myContext);
+  const history = useNavigate();
+  const [isLoading, setisLoading] = useState(false);
   const [ShowPassword, setShowPasword] = useState(false);
+  const [formFields, setfromFields] = useState({
+    name: "",
+    email: "",
+    password: "",
+  });
+  const onChangeInput = (e) => {
+    const { name, value } = e.target;
+    setfromFields(() => {
+      return {
+        ...formFields,
+        [name]: value,
+      };
+    });
+  };
+  const validValue = Object.values(formFields).every((el) => el);
+  const handlesubmit = (e) => {
+    setisLoading(true);
+    e.preventDefault();
+    if (formFields.name === "") {
+      context.Alertbox("error", "Please Provide Your Name");
+      return false;
+    }
+    if (formFields.email === "") {
+      context.Alertbox("error", "Please Provide Your Email");
+      return false;
+    }
+    if (formFields.password === "") {
+      context.Alertbox("error", "Please Provide Your Password");
+      return false;
+    }
+
+    postData("/api/user/register", formFields).then((res) => {
+      if (res.error !== true) {
+        setisLoading(false);
+        context.Alertbox("success", res.message);
+        localStorage.setItem("userEmail", formFields.email);
+        console.log(res);
+        setfromFields({
+          name: "",
+          email: "",
+          password: "",
+        });
+
+        history("/verify");
+      } else {
+        context.Alertbox("error", res.message);
+        setisLoading(false);
+      }
+    });
+  };
 
   return (
     <>
@@ -23,14 +80,18 @@ export default function Register() {
               {" "}
               Register Your Account
             </h3>
-            <form className="w-full">
+            <form className="w-full " onSubmit={handlesubmit}>
               <div className="formgroup w-full mb-5 mt-5">
                 <TextField
                   id="Name"
                   type="text"
+                  name="name"
+                  value={formFields.name}
+                  disabled={isLoading === true ? true : false}
                   label="Full Name"
                   variant="outlined"
                   className="w-full"
+                  onChange={onChangeInput}
                 />
               </div>
 
@@ -38,29 +99,27 @@ export default function Register() {
                 <TextField
                   id="EmailId*"
                   type="email"
+                  disabled={isLoading === true ? true : false}
+                  value={formFields.email}
+                  name="email"
                   label="Email"
                   variant="outlined"
                   className="w-full"
+                  onChange={onChangeInput}
                 />
               </div>
               <div className="formgroup w-full mb-3 relative">
-                {ShowPassword === true ? (
-                  <TextField
-                    id="Password"
-                    type="text"
-                    label="Password"
-                    variant="outlined"
-                    className="w-full"
-                  />
-                ) : (
-                  <TextField
-                    id="Password"
-                    type="password"
-                    label="Password"
-                    variant="outlined"
-                    className="w-full"
-                  />
-                )}
+                <TextField
+                  id="Password"
+                  type={ShowPassword ? "text" : "password"}
+                  name="password"
+                  disabled={isLoading}
+                  value={formFields.password}
+                  label="Password"
+                  variant="outlined"
+                  className="w-full"
+                  onChange={onChangeInput}
+                />
 
                 <Button
                   className="!absolute  !top-[10px] !right-[10px] !z-50 !w-[35px] !min-w-[35px] !h-[35px]
@@ -76,7 +135,18 @@ export default function Register() {
               </div>
 
               <div className="flex !items-center mt-3 mb-3">
-                <Button className="btn-org w-full">Sign Up</Button>
+                <Button
+                  type="submit"
+                  disabled={!validValue}
+                  className="btn-org w-full gap-3"
+                >
+                  Sign Up
+                  {isLoading === true ? (
+                    <CircularProgress color="inherit" />
+                  ) : (
+                    ""
+                  )}
+                </Button>
               </div>
 
               <a className="text-[13px]  text-gray-700 cursor-pointer">

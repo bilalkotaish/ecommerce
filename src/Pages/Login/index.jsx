@@ -4,11 +4,14 @@ import { IoMdEyeOff } from "react-icons/io";
 import Button from "@mui/material/Button";
 import { useContext, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import CircularProgress from "@mui/material/CircularProgress";
+import { postData } from "../../utils/api";
 import { FcGoogle } from "react-icons/fc";
 import { myContext } from "../../App";
 
 export default function Login() {
   const [ShowPassword, setShowPasword] = useState(false);
+  const [isLoading, setisLoading] = useState(false);
   const context = useContext(myContext);
 
   const [formfield, setformfield] = useState({
@@ -16,13 +19,80 @@ export default function Login() {
     password: "",
   });
   const history = useNavigate();
+  const validValue = Object.values(formfield).every((el) => el);
+
+  const onChangeInput = (e) => {
+    const { name, value } = e.target;
+    setformfield(() => {
+      return {
+        ...formfield,
+        [name]: value,
+      };
+    });
+  };
+  const handlesubmit = (e) => {
+    setisLoading(true);
+    e.preventDefault();
+
+    if (formfield.email === "") {
+      context.Alertbox("error", "Please Provide Your Email");
+      return false;
+    }
+    if (formfield.password === "") {
+      context.Alertbox("error", "Please Provide Your Password");
+      return false;
+    }
+
+    postData("/api/user/login", formfield, { withCredentials: true }).then(
+      (res) => {
+        if (res.error !== true) {
+          setisLoading(false);
+          context.Alertbox("success", res.message);
+          localStorage.setItem("userEmail", formfield.email);
+          console.log(res);
+          setformfield({
+            email: "",
+            password: "",
+          });
+          localStorage.setItem("accesstoken", res.data.accesstoken);
+          localStorage.setItem("refreshtoken", res.data.refreshToken);
+          context.setislogin(true);
+
+          history("/");
+        } else {
+          context.Alertbox("error", res.message);
+          setisLoading(false);
+          context.setislogin(false);
+        }
+      }
+    );
+  };
 
   const forgetPassword = () => {
-    context.Alertbox(
-      "success",
-      "The verification code is sent to your email address"
-    );
-    history("/verify");
+    if (formfield.email === "") {
+      context.Alertbox("error", "Please Provide Your Email");
+      return false;
+    } else {
+      context.Alertbox(
+        "success",
+        `The verification code is sent to ${formfield.email}`
+      );
+      localStorage.setItem("userEmail", formfield.email);
+      localStorage.setItem("action-type", "forgetPassword");
+      postData("/api/user/forgetpassword", {
+        email: localStorage.getItem("userEmail"),
+      }).then((res) => {
+        console.log(res);
+        if (res.success) {
+          context.Alertbox("success", res.message);
+
+          //localStorage.removeItem("userEmail"),
+          history("/verify");
+        } else {
+          context.Alertbox("error", res.message);
+        }
+      });
+    }
   };
 
   return (
@@ -39,36 +109,34 @@ export default function Login() {
               {" "}
               Login To Your Account
             </h3>
-            <form className="w-full">
+            <form className="w-full" onSubmit={handlesubmit}>
               <div className="formgroup w-full mb-5 mt-5">
                 <TextField
                   id="EmailId*"
                   type="email"
+                  disabled={isLoading}
+                  value={formfield.email}
                   label="Email"
                   variant="outlined"
                   className="w-full"
+                  autoComplete="email"
                   name="email"
+                  onChange={onChangeInput}
                 />
               </div>
               <div className="formgroup w-full mb-3 relative">
-                {ShowPassword === true ? (
-                  <TextField
-                    id="Password"
-                    type="text"
-                    label="Password"
-                    variant="outlined"
-                    className="w-full"
-                    name="password"
-                  />
-                ) : (
-                  <TextField
-                    id="Password"
-                    type="password"
-                    label="Password"
-                    variant="outlined"
-                    className="w-full"
-                  />
-                )}
+                <TextField
+                  id="Password"
+                  type={ShowPassword ? "text" : "password"}
+                  name="password"
+                  disabled={isLoading}
+                  value={formfield.password}
+                  label="Password"
+                  variant="outlined"
+                  className="w-full"
+                  autoComplete="current-password"
+                  onChange={onChangeInput}
+                />
 
                 <Button
                   className="!absolute  !top-[10px] !right-[10px] !z-50 !w-[35px] !min-w-[35px] !h-[35px]
@@ -95,7 +163,18 @@ export default function Login() {
               </Link>
 
               <div className="flex !items-center mt-3 mb-3">
-                <Button className="btn-org w-full">Login</Button>
+                <Button
+                  type="submit"
+                  disabled={!validValue}
+                  className="btn-org w-full gap-3"
+                >
+                  Login
+                  {isLoading === true ? (
+                    <CircularProgress color="inherit" />
+                  ) : (
+                    ""
+                  )}
+                </Button>
               </div>
 
               <h2 className="text-[13px]  text-gray-700 cursor-pointer">
