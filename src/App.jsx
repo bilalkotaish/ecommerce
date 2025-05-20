@@ -31,6 +31,7 @@ import Listitems from "./Component/Mylist/Listitems";
 import MyList from "./Component/Mylist";
 import Orders from "./Pages/Orders";
 import { fetchData } from "./utils/api";
+import Address from "./Pages/Myaccount/address";
 
 export const myContext = createContext();
 
@@ -41,7 +42,6 @@ function App() {
   const [openCartPanel, setopenCartPanel] = useState(false);
   const [islogin, setislogin] = useState(false);
   const [userData, setuserData] = useState(null);
-  const apiurl = import.meta.env.VITE_API_URL;
 
   const Alertbox = (status, msg) => {
     if (status === "success") {
@@ -55,18 +55,34 @@ function App() {
   const toggleCartPanel = (newOpen) => () => {
     setopenCartPanel(newOpen);
   };
-
   useEffect(() => {
     const token = localStorage.getItem("accesstoken");
-    // if (token !== null || token !== undefined || token !== "") {
-    //   setislogin(true);
-    fetchData(`/api/user/userdetails?token=${token}`).then((res) => {
-      setuserData(res.data);
-    });
-    // } else {
-    //   setislogin(false);
-    // }
-  });
+
+    if (token) {
+      setislogin(true);
+      fetchData(`/api/user/userdetails`)
+        .then((res) => {
+          if (res.error) {
+            throw res;
+          }
+          setuserData(res.data);
+        })
+        .catch((err) => {
+          const message = err?.message || err?.response?.data?.message;
+
+          if (message === "You Are Not Logged In") {
+            localStorage.removeItem("accesstoken");
+            localStorage.removeItem("refreshToken");
+            Alertbox("error", "Your session has expired");
+            setislogin(false);
+          } else {
+            Alertbox("error", "An error occurred while fetching user data");
+          }
+        });
+    } else {
+      setislogin(false);
+    }
+  }, []);
 
   const handleClickOpen = () => {
     setOpenProduct(true);
@@ -116,42 +132,41 @@ function App() {
             <Route path="/myaccount" exact={true} element={<Myaccount />} />
             <Route path="/mylist" exact={true} element={<MyList />} />
             <Route path="/orders" exact={true} element={<Orders />} />
+            <Route path="/address" exact={true} element={<Address />} />
           </Routes>
           <Footer />
+
+          <Dialog
+            open={openProduct}
+            onClose={handleClose}
+            fullWidth={fullWidth}
+            maxWidth={maxWidth}
+            aria-labelledby="alert-dialog-title"
+            aria-describedby="alert-dialog-description"
+            className="productdetailsmodal"
+          >
+            <DialogContent>
+              <div className="flex items-center w-full productdetailsmodalcontainer relative">
+                <Button
+                  onClick={handleClose}
+                  className="!w-[40px] !h-[40px] !min-w-[40px] !text-[25px] !rounded-full !text-black !absolute top-[15px] right-[0px]"
+                >
+                  {" "}
+                  <RiCloseLine />
+                </Button>
+                <div className="col-1 w-[40%]">
+                  <Productzoom />
+                </div>
+                <div className="col-2 w-[60%] py-2 px-6 pr-1">
+                  <ProductModal />
+                </div>
+              </div>
+            </DialogContent>
+          </Dialog>
         </myContext.Provider>
       </BrowserRouter>
 
       <Toaster />
-      <Button variant="outlined" onClick={handleClickOpen}>
-        Open alert dialog
-      </Button>
-      <Dialog
-        open={openProduct}
-        onClose={handleClose}
-        fullWidth={fullWidth}
-        maxWidth={maxWidth}
-        aria-labelledby="alert-dialog-title"
-        aria-describedby="alert-dialog-description"
-        className="productdetailsmodal"
-      >
-        <DialogContent>
-          <div className="flex items-center w-full productdetailsmodalcontainer relative">
-            <Button
-              onClick={handleClose}
-              className="!w-[40px] !h-[40px] !min-w-[40px] !text-[25px] !rounded-full !text-black !absolute top-[15px] right-[0px]"
-            >
-              {" "}
-              <RiCloseLine />
-            </Button>
-            <div className="col-1 w-[40%]">
-              <Productzoom />
-            </div>
-            <div className="col-2 w-[60%] py-2 px-6 pr-1">
-              <ProductModal />
-            </div>
-          </div>
-        </DialogContent>
-      </Dialog>
     </>
   );
 }

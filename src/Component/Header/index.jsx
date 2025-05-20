@@ -1,4 +1,4 @@
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import logo from "./../../assets/logo.png";
 import Search from "../Search";
 
@@ -10,7 +10,7 @@ import { LuGitCompareArrows } from "react-icons/lu";
 import { FaRegHeart } from "react-icons/fa";
 import { Tooltip } from "@mui/material";
 import Navigation from "./Navigation";
-import { useContext } from "react";
+import { useContext, useEffect } from "react";
 import { myContext } from "../../App";
 import { FaRegUser } from "react-icons/fa";
 import Button from "@mui/material/Button";
@@ -40,6 +40,9 @@ const StyledBadge = styled(Badge)(({ theme }) => ({
 export default function Header() {
   const context = useContext(myContext);
   const [anchorEl, setAnchorEl] = useState(null);
+  const [userData, setuserData] = useState(null);
+  const history = useNavigate();
+
   const open = Boolean(anchorEl);
   const handleClick = (event) => {
     setAnchorEl(event.currentTarget);
@@ -47,6 +50,7 @@ export default function Header() {
   const handleClose = () => {
     setAnchorEl(null);
   };
+
   const logout = () => {
     setAnchorEl(null);
     fetchData(`/api/user/Logout?token=${localStorage.getItem("accesstoken")}`, {
@@ -54,9 +58,10 @@ export default function Header() {
     }).then((res) => {
       console.log(res);
       if (res.error === false) {
+        context.setislogin(false);
         localStorage.removeItem("accesstoken");
         localStorage.removeItem("refreshtoken");
-        context.setislogin(false);
+        history("/");
       } else {
         context.setislogin(true);
       }
@@ -133,18 +138,16 @@ export default function Header() {
                       className="myaccountwrapper flex items-center gap-3"
                       onClick={handleClick}
                     >
-                      <Button className="!w-[40px] !h-[40px] !text-[20px] !text-gray-600 !rounded-full !min-w-[40px]">
-                        {" "}
+                      <div className="!w-[40px] !h-[40px] !text-[20px] !text-gray-600 !rounded-full flex items-center justify-center">
                         <FaRegUser />
-                      </Button>
+                      </div>
 
-                      <div className="info flex  flex-col">
+                      <div className="info flex flex-col">
                         <h4 className="text-[15px] leading-3 mb-0 !text-[rgba(0,0,0,0.7)] font-[500] capitalize text-left justify-start">
-                          {" "}
-                          {context?.userData?.name}
+                          {context.userData?.name}
                         </h4>
-                        <span className="text-[15px] mb-0 !text-[rgba(0,0,0,0.7)] font-[500] lowercase  text-left justify-start">
-                          {context?.userData.email}
+                        <span className="text-[15px] mb-0 !text-[rgba(0,0,0,0.7)] font-[500] lowercase text-left justify-start">
+                          {context?.userData?.email}
                         </span>
                       </div>
                     </Button>

@@ -362,3 +362,17 @@ button .MuiCircularProgress-root {
   width: 20px !important;
   height: 20px !important;
 }
+.MuiDialog-paper {
+  overflow: visible !important;
+  width: 65% !important;
+  max-width: 70% !important;
+}
+/* Force the PhoneInput to match TextField */
+.react-international-phone-input {
+  width: 100% !important;
+  height: 100% !important;
+}
+.react-international-phone-country-selector-button {
+  width: 100% !important;
+  height: 100% !important;
+}
