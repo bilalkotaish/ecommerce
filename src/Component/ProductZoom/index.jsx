@@ -8,7 +8,7 @@ import "swiper/css";
 import "swiper/css/pagination";
 import { useRef, useState } from "react";
 
-export default function Productzoom() {
+export default function Productzoom(props) {
   const [slideindex, setslideindex] = useState(0);
   const usezoom1 = useRef();
   const usezoom2 = useRef();
@@ -25,132 +25,54 @@ export default function Productzoom() {
           direction={"vertical"}
           slidesPerView={4} // Number of slides visible at a time
           spaceBetween={5} // Space between slides
-          navigation={true} // Enable navigation buttons (next/prev)
+          navigation={false} // Enable navigation buttons (next/prev)
           modules={[Navigation]} // Import navigation module
           className="zoomthumbs h-[500px]"
         >
-          <SwiperSlide>
-            <div
-              className={`item  rounded-md !overflow-hidden cursor-pointer group ${
-                slideindex === 0 ? "opacity-1" : "opacity-30"
-              }`}
-              onClick={() => {
-                Goto(0);
-              }}
-            >
-              <img
-                src="https://serviceapi.spicezgold.com/download/1742463096956_hbhb2.jpg"
-                alt="Product 1"
-                className=" w-full transition-full rounded-lg group-hover:scale-105"
-              />
-            </div>
-          </SwiperSlide>
-
-          <SwiperSlide>
-            <div
-              className={`item  rounded-md !overflow-hidden cursor-pointer group ${
-                slideindex === 1 ? "opacity-1" : "opacity-30"
-              }`}
-              onClick={() => {
-                Goto(1);
-              }}
-            >
-              <img
-                src="https://serviceapi.spicezgold.com/download/1742463096960_hbhb3.jpg"
-                alt="Product 2"
-                className="w-full transition-full rounded-lg group-hover:scale-105"
-              />
-            </div>
-          </SwiperSlide>
-          <SwiperSlide>
-            <div
-              className={`item  rounded-md !overflow-hidden cursor-pointer group ${
-                slideindex === 2 ? "opacity-1" : "opacity-30"
-              }`}
-              onClick={() => {
-                Goto(2);
-              }}
-            >
-              <img
-                src="https://serviceapi.spicezgold.com/download/1742463096956_hbhb2.jpg"
-                alt="Product 3"
-                className=" w-full transition-full rounded-lg group-hover:scale-105"
-              />
-            </div>
-          </SwiperSlide>
-
-          <SwiperSlide>
-            <div
-              className={`item  rounded-md !overflow-hidden cursor-pointer group ${
-                slideindex === 3 ? "opacity-1" : "opacity-30"
-              }`}
-              onClick={() => {
-                Goto(3);
-              }}
-            >
-              <img
-                src="https://serviceapi.spicezgold.com/download/1742463096960_hbhb3.jpg"
-                alt="Product 4"
-                className="w-full transition-full rounded-lg group-hover:scale-105"
-              />
-            </div>
-          </SwiperSlide>
-
-          <SwiperSlide>
-            <div
-              className={`item  rounded-md !overflow-hidden cursor-pointer group ${
-                slideindex === 4 ? "opacity-1" : "opacity-30"
-              }`}
-              onClick={() => {
-                Goto(4);
-              }}
-            >
-              <img
-                src="https://serviceapi.spicezgold.com/download/1742463096960_hbhb3.jpg"
-                alt="Product 4"
-                className="w-full transition-full rounded-lg group-hover:scale-105"
-              />
-            </div>
-          </SwiperSlide>
+          {props.images?.map((item, index) => {
+            return (
+              <SwiperSlide key={index}>
+                <div
+                  className={`item  rounded-md !overflow-hidden cursor-pointer group ${
+                    slideindex === index ? "opacity-1" : "opacity-30"
+                  }`}
+                  onClick={() => {
+                    Goto(index);
+                  }}
+                >
+                  <img
+                    src={item.url}
+                    alt="Product 1"
+                    className=" w-full transition-full rounded-lg group-hover:scale-105"
+                  />
+                </div>
+              </SwiperSlide>
+            );
+          })}
         </Swiper>
       </div>
-      <div className="zoomcontainer w-[85%] h-[500px] overflow-hidden rounded-md">
-        <Swiper
-          slidesPerView={1}
-          ref={usezoom2}
-          spaceBetween={0}
-          navigation={false}
-        >
-          <SwiperSlide>
-            <InnerImageZoom
-              src="https://serviceapi.spicezgold.com/download/1742463096956_hbhb2.jpg"
-              zoomType="hover"
-              zoomScale={1}
-            />
-          </SwiperSlide>
-          <SwiperSlide>
-            <InnerImageZoom
-              src="https://serviceapi.spicezgold.com/download/1742463096960_hbhb3.jpg"
-              zoomType="hover"
-              zoomScale={1}
-            />
-          </SwiperSlide>
-          <SwiperSlide>
-            <InnerImageZoom
-              src="https://serviceapi.spicezgold.com/download/1742463096956_hbhb2.jpg"
-              zoomType="hover"
-              zoomScale={1}
-            />
-          </SwiperSlide>
-          <SwiperSlide>
-            <InnerImageZoom
-              src="https://serviceapi.spicezgold.com/download/1742463096960_hbhb3.jpg"
-              zoomType="hover"
-              zoomScale={1}
-            />
-          </SwiperSlide>
-        </Swiper>
-      </div>
+      {
+        <div className="zoomcontainer w-[85%] h-[500px] overflow-hidden rounded-md">
+          <Swiper
+            slidesPerView={1}
+            ref={usezoom2}
+            spaceBetween={0}
+            navigation={false}
+          >
+            {props.images?.map((item, index) => {
+              return (
+                <SwiperSlide key={index}>
+                  <InnerImageZoom
+                    src={item.url}
+                    zoomType="hover"
+                    zoomScale={1}
+                  />
+                </SwiperSlide>
+              );
+            })}
+          </Swiper>
+        </div>
+      }
     </div>
   );
 }

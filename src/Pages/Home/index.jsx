@@ -6,7 +6,7 @@ import Blogitem from "../../Component/Blogitem/index.jsx";
 import { Navigation } from "swiper/modules";
 import "./../../index.css";
 import { FaShippingFast } from "react-icons/fa";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Tabs from "@mui/material/Tabs";
 import Tab from "@mui/material/Tab";
 import { Swiper, SwiperSlide } from "swiper/react";
@@ -16,29 +16,53 @@ import "swiper/css/navigation";
 import ProductSlider from "../../Component/ProductSlider/index.jsx";
 
 import Homev2 from "../../Component/homesliderv2/index.jsx";
+import { fetchData } from "../../utils/api.js";
+import { useContext } from "react";
+import { myContext } from "../../App.jsx";
+import ProductLoader from "../../Component/Productloader/index.jsx";
 export default function Home() {
   const [value, setValue] = useState(0);
+  const [catData, setCatData] = useState([]);
+  const [bannerData, setBannerData] = useState([]);
+  const [popproductData, setpopProductData] = useState([]);
+  const [allproductData, setallProductData] = useState([]);
+  const [Featured, setFeatured] = useState([]);
+  const context = useContext(myContext);
 
+  useEffect(() => {
+    setCatData(context.catData || []);
+    fetchData("/api/homebanner/get").then((res) => {
+      console.log("Fetched Home Banner data:", res);
+      setBannerData(res.data || []);
+      console.log(bannerData);
+    });
+    fetchData("/api/product/products").then((res) => {
+      setallProductData([]);
+
+      console.log("Fetched All Product data:", res);
+      setallProductData(res.data || []);
+    });
+    fetchData("/api/product/isFeatured").then((res) => {
+      setFeatured([]);
+      console.log("Fetched Featured Product data:", res);
+      setFeatured(res.data || []);
+    });
+  }, [context.catData]);
   const handleChange = (event, newValue) => {
     setValue(newValue);
   };
+
+  const filterByCatId = (id) => {
+    setpopProductData([]);
+    fetchData(`/api/product/products/${id}`).then((res) => {
+      console.log("Fetched Product data:", res);
+      setpopProductData(res.data || []);
+    });
+  };
   return (
     <div>
-      <HomeSlider />
-
-      <Catslider />
-
-      <section className="py-6">
-        <div className="container flex items-center gap-5">
-          <div className="part1 w-[70%]">
-            <Homev2 />
-          </div>
-          <div className="part-2 w-[30%]  flex items-center gap-5 h-[195px]justify-between flex-col">
-            <Bannerboxv2 info="right" image="src\assets\bannerv2.jpg" />
-            <Bannerboxv2 info="left" image="src\assets\bannerv2-2.jpg" />
-          </div>
-        </div>
-      </section>
+      {bannerData.length !== 0 && <HomeSlider data={bannerData} />}
+      {context.catData.length !== 0 && <Catslider data={context.catData} />}
 
       <section className="bg-white py-16">
         <div className="container">
@@ -56,18 +80,33 @@ export default function Home() {
                 scrollButtons="auto"
                 aria-label="scrollable auto tabs example"
               >
-                <Tab label="Fashion" />
-                <Tab label="Electronics" />
-                <Tab label="Grocery" />
-                <Tab label="Bags" />
-                <Tab label="Footwear" />
-                <Tab label="Beauty" />
-                <Tab label="Wellness" />
-                <Tab label="Jewllery" />
+                {context.catData.length !== 0 &&
+                  context.catData.map((item, index) => (
+                    <Tab
+                      key={index}
+                      label={item.name}
+                      onClick={() => filterByCatId(item._id)}
+                    />
+                  ))}
               </Tabs>
             </div>
           </div>
-          <ProductSlider items={5} />
+          {popproductData.length === 0 && <ProductLoader />}
+
+          {popproductData.length !== 0 && (
+            <ProductSlider items={5} data={popproductData} />
+          )}
+        </div>
+      </section>
+      <section className="py-6 bg-white">
+        <div className="container flex items-center gap-5">
+          <div className="part1 w-[70%]">
+            {allproductData.length !== 0 && <Homev2 data={allproductData} />}
+          </div>
+          <div className="part-2 w-[30%]  flex items-center gap-5 h-[195px]justify-between flex-col">
+            <Bannerboxv2 info="right" image="src\assets\bannerv2.jpg" />
+            <Bannerboxv2 info="left" image="src\assets\bannerv2-2.jpg" />
+          </div>
         </div>
       </section>
 
@@ -101,8 +140,12 @@ export default function Home() {
               <h2 className="text-[25px] font-[600]">Latest Products</h2>
             </div>
           </div>
-          <ProductSlider items={5} />
-          <Adsslider items={3} />
+          {allproductData.length === 0 && <ProductLoader />}
+          {allproductData.length !== 0 && (
+            <ProductSlider items={5} data={allproductData} />
+          )}
+
+          <Adsslider items={4} />
         </div>
       </section>
       <section className="bg-white py-5">
@@ -112,8 +155,10 @@ export default function Home() {
               <h2 className="text-[25px] font-[600]">Featured Products</h2>
             </div>
           </div>
-          <ProductSlider items={5} />
-          <Adsslider items={3} />
+          {Featured.length === 0 && <ProductLoader />}
+          {Featured.length !== 0 && <ProductSlider items={5} data={Featured} />}
+
+          <Adsslider items={4} />
         </div>
       </section>
 

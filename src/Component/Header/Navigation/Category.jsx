@@ -38,8 +38,7 @@ const Category = (props) => {
           className="cursor-pointer text-[20px]"
         />
       </h3>
-
-      <Categorycollapse />
+      {props.data.length !== 0 && <Categorycollapse data={props.data} />}
     </Box>
   );
 

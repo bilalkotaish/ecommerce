@@ -6,50 +6,101 @@ import { Button } from "@mui/material";
 import { Link } from "react-router-dom";
 import Qtybox from "../../Component/Qtybox";
 import { useState } from "react";
+import { CiShare1 } from "react-icons/ci";
 
-export default function ProductModal() {
+export default function ProductModal(props) {
   const [buttonindex, setbuttonindex] = useState(null);
-  const sizes = ["S", "M", "L", "XL"];
+  const [buttonindex1, setbuttonindex1] = useState(null);
+  const [buttonindex2, setbuttonindex2] = useState(null);
+
+  const handleclick = (index) => {
+    setbuttonindex(index);
+  };
+  const handleclickram = (index) => {
+    setbuttonindex1(index);
+  };
+  const handleclickweight = (index) => {
+    setbuttonindex2(index);
+  };
 
   return (
-    <div className="content w-full md:w-[60%] px-5 md:px-10">
-      <h1 className="text-2xl font-semibold mb-3 text-gray-800">
-        Men Opaque Casual Shirt
+    <div className="content w-full md:w-[100%] px-4 md:px-8 lg:px-12">
+      {/* Product Title */}
+      <h1 className="text-2xl md:text-3xl !space-nowrap font-semibold no-wrap mb-4 text-gray-900 tracking-tight">
+        {props.item?.name}
       </h1>
 
-      <div className="flex items-center gap-3 mb-2">
-        <span className="text-gray-500 text-sm">
-          Brand: <span className="font-semibold text-gray-800">Zara</span>
-        </span>
-        <Rating name="size-small" defaultValue={3} size="small" readOnly />
-        <span className="text-sm text-gray-500 hover:underline cursor-pointer">
-          Reviews (5)
-        </span>
+      {/* Rating and Brand */}
+      <div className="flex flex-wrap items-center gap-3 mb-4">
+        <div className="flex items-center gap-1 bg-gray-100 px-3 py-1 rounded-full">
+          <Rating
+            name="product-rating"
+            value={props.item?.rating || 0}
+            precision={0.5}
+            size="small"
+            readOnly
+            className="!text-yellow-500"
+          />
+          <span className="text-xs text-gray-600 ml-1">
+            ({props.item?.reviews || 0} reviews)
+          </span>
+        </div>
+        <div className="text-sm text-gray-600 bg-gray-100 px-3 py-1 rounded-full">
+          Brand:{" "}
+          <span className="font-medium text-gray-800">
+            {props.item?.brand || "Unknown"}
+          </span>
+        </div>
       </div>
 
-      <div className="flex items-center gap-3 mb-3">
-        <span className="line-through text-gray-400 text-lg font-medium">
-          $58.00
-        </span>
-        <span className="text-primary text-lg font-bold">$29.00</span>
+      {/* Price Section */}
+      <div className="mb-6">
+        <div className="flex items-baseline gap-3 mb-1">
+          {props.item?.oldprice && (
+            <span className="line-through text-gray-400 text-lg font-medium">
+              ${props.item?.oldprice.toFixed(2)}
+            </span>
+          )}
+          <span className="text-primary text-2xl font-bold">
+            ${props.item?.price?.toFixed(2) || "N/A"}
+          </span>
+          {props.item?.discount && (
+            <span className="ml-2 bg-red-100 text-red-600 text-xs font-bold px-2 py-1 rounded">
+              {props.item?.discount}% OFF
+            </span>
+          )}
+        </div>
+        <div className="text-sm text-gray-600">
+          <span
+            className={
+              props.item?.countInStock > 0 ? "text-green-600" : "text-red-600"
+            }
+          >
+            {props.item?.countInStock > 0
+              ? `In Stock (${props.item?.countInStock} available)`
+              : "Out of Stock"}
+          </span>
+          {props.item?.countInStock > 0 && (
+            <span className="ml-2 text-gray-500 italic">
+              Free shipping (2-3 business days)
+            </span>
+          )}
+        </div>
       </div>
 
-      <span className="text-sm text-gray-700 font-semibold block mb-3">
-        Available in Stock:{" "}
-        <span className="text-green-600 font-bold">147 items</span>
-      </span>
-
-      <p className="text-gray-600 text-sm leading-6 mb-5">
-        Crafted for comfort and effortless sophistication. Designed with
-        lightweight, breathable fabric, it ensures all-day ease whether you're
-        at work, out with friends, or relaxing on the weekend.
-      </p>
+      {/* Description */}
+      <div className="mb-8">
+        <h3 className="text-sm font-medium text-gray-900 mb-2">Description</h3>
+        <p className="text-gray-700 text-sm leading-relaxed">
+          {props.item?.description || "No description available."}
+        </p>
+      </div>
 
       {/* Size Selection */}
       <div className="flex items-center mb-5">
         <span className="text-base font-medium">Size:</span>
         <div className="flex items-center gap-2 pl-4">
-          {sizes.map((size, index) => (
+          {props.item?.size?.map((size, index) => (
             <Button
               key={index}
               variant="outlined"
@@ -59,29 +110,64 @@ export default function ProductModal() {
                   ? "!bg-primary !text-white"
                   : "!text-gray-700"
               }`}
-              onClick={() => setbuttonindex(index)}
+              onClick={() => handleclick(index)}
             >
               {size}
             </Button>
           ))}
         </div>
       </div>
+      <div className="flex items-center mb-5">
+        <span className="text-base font-medium">Ram:</span>
+        <div className="flex items-center gap-2 pl-4">
+          {props.item?.productRam?.map((ram, index) => (
+            <Button
+              key={index}
+              variant="outlined"
+              size="small"
+              className={`!rounded-full !px-4 !py-1 ${
+                buttonindex1 === index
+                  ? "!bg-primary !text-white"
+                  : "!text-gray-700"
+              }`}
+              onClick={() => handleclickram(index)}
+            >
+              {ram}
+            </Button>
+          ))}
+        </div>
+      </div>
+      <div className="flex items-center mb-5">
+        <span className="text-base font-medium">Weight:</span>
+        <div className="flex items-center gap-2 pl-4">
+          {props.item?.productweight?.map((weight, index) => (
+            <Button
+              key={index}
+              variant="outlined"
+              size="small"
+              className={`!rounded-full !px-4 !py-1 ${
+                buttonindex2 === index
+                  ? "!bg-primary !text-white"
+                  : "!text-gray-700"
+              }`}
+              onClick={() => handleclickweight(index)}
+            >
+              {weight}
+            </Button>
+          ))}
+        </div>
+      </div>
 
-      {/* Shipping Info */}
-      <p className="text-gray-500 text-sm mb-4 italic">
-        Free Shipping (Est. Delivery: 2-3 Days)
-      </p>
-
-      {/* Quantity + Add to Cart */}
+      {/* Quantity & Add to Cart */}
       <div className="flex items-center mb-5">
         <div className="w-[70px]">
           <Qtybox />
         </div>
         <Button
           variant="contained"
-          className="!bg-primary !text-white flex items-center gap-2 !ml-4 hover:!bg-primary-dark"
+          className="!bg-primary !text-white flex items-center gap-2 !ml-4 !px-4 !py-2 hover:!bg-primary-dark whitespace-nowrap"
         >
-          <MdOutlineAddShoppingCart className="text-lg" />
+          <MdOutlineAddShoppingCart className="text-sm" />
           Add To Cart
         </Button>
       </div>

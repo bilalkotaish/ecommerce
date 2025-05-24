@@ -69,7 +69,7 @@ export default function Header() {
   };
   return (
     <div>
-      <header className="bg-white">
+      <header className="bg-white sticky top-0 z-50">
         <div className="top-strip py-2 border-t-[1px] border-gray-250 border-b-[1px]">
           <div className="container">
             <div className="flex items-center justify-between">
@@ -103,7 +103,7 @@ export default function Header() {
           </div>
         </div>
 
-        <div className="header py-3 border-gray-250 border-b-[1px]">
+        <div className="header   py-3 border-gray-250 border-b-[1px]">
           <div className="container flex item-center justify-between">
             <div className="col1 w-[25%]">
               <Link to={"/"}>

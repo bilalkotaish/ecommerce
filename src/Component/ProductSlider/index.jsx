@@ -13,7 +13,17 @@ export default function ProductSlider(props) {
         className="mySwiper"
         slidesPerView={props.items}
       >
-        <SwiperSlide>
+        {props.data?.length !== 0 &&
+          props.data?.map((item, index) => {
+            return (
+              <SwiperSlide key={index}>
+                <div className="item h-[390px] w-[100%] flex">
+                  <ProductItem item={item} />
+                </div>
+              </SwiperSlide>
+            );
+          })}
+        {/* <SwiperSlide>
           <ProductItem />
         </SwiperSlide>
         <SwiperSlide>
@@ -30,7 +40,7 @@ export default function ProductSlider(props) {
         </SwiperSlide>
         <SwiperSlide>
           <ProductItem />
-        </SwiperSlide>
+        </SwiperSlide> */}
       </Swiper>
     </div>
   );

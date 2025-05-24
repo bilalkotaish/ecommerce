@@ -4,9 +4,9 @@ import "swiper/css/navigation";
 
 import { Navigation, Autoplay } from "swiper/modules";
 
-export default function HomeSlider() {
+export default function HomeSlider(props) {
   return (
-    <div className="homeslider">
+    <div className="homeslider bg-white">
       <div className="container">
         <Swiper
           navigation={true}
@@ -19,69 +19,20 @@ export default function HomeSlider() {
           spaceBetween={30}
           className="sliderhome"
         >
-          <SwiperSlide>
-            <div className="rounded-[20px] overflow-hidden item">
-              <img
-                src="src\assets\banner1.jpg"
-                className="w-full"
-                alt="bannerslide"
-              />
-            </div>
-          </SwiperSlide>
-          <SwiperSlide>
-            <div className="rounded-[20px] overflow-hidden item">
-              <img
-                src="src\assets\banner2.jpg"
-                className="w-full"
-                alt="bannerslide"
-              />
-            </div>
-          </SwiperSlide>
-          <SwiperSlide>
-            <div className="rounded-[20px] overflow-hidden item">
-              <img
-                src="src\assets\banner3.jpg"
-                className="w-full"
-                alt="bannerslide"
-              />
-            </div>
-          </SwiperSlide>
-          <SwiperSlide>
-            <div className="rounded-[20px] overflow-hidden item">
-              <img
-                src="src\assets\banner4.jpg"
-                className="w-full"
-                alt="bannerslide"
-              />
-            </div>
-          </SwiperSlide>
-          <SwiperSlide>
-            <div className="rounded-[20px] overflow-hidden item">
-              <img
-                src="src\assets\banner7.jpg"
-                className="w-full"
-                alt="bannerslide"
-              />
-            </div>
-          </SwiperSlide>
-          <SwiperSlide>
-            <div className="rounded-[20px] overflow-hidden item">
-              <img
-                src="src\assets\banner6.jpg"
-                className="w-full"
-                alt="bannerslide"
-              />
-            </div>
-          </SwiperSlide>
-          <SwiperSlide>
-            <div className="rounded-[20px] overflow-hidden item">
-              <img
-                src="src\assets\banner8.jpg"
-                className="w-full"
-                alt="bannerslide"
-              />
-            </div>
-          </SwiperSlide>
+          {props.data.length !== 0 &&
+            props.data.map((item) => {
+              return (
+                <SwiperSlide key={item.id}>
+                  <div className="rounded-[20px] overflow-hidden item">
+                    <img
+                      src={item.image[0].url}
+                      className="w-full"
+                      alt="bannerslide"
+                    />
+                  </div>
+                </SwiperSlide>
+              );
+            })}
         </Swiper>
       </div>
     </div>

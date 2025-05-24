@@ -36,12 +36,16 @@ import Address from "./Pages/Myaccount/address";
 export const myContext = createContext();
 
 function App() {
-  const [openProduct, setOpenProduct] = useState(false);
+  const [openProduct, setOpenProduct] = useState({
+    open: false,
+    item: {},
+  });
   const [maxWidth, setMaxWidth] = useState("lg");
   const [fullWidth, setFullWidth] = useState(true);
   const [openCartPanel, setopenCartPanel] = useState(false);
   const [islogin, setislogin] = useState(false);
   const [userData, setuserData] = useState(null);
+  const [catData, setCatData] = useState([]);
 
   const Alertbox = (status, msg) => {
     if (status === "success") {
@@ -51,7 +55,12 @@ function App() {
       toast.error(msg);
     }
   };
-
+  useEffect(() => {
+    fetchData("/api/category/getcategory").then((res) => {
+      console.log("Fetched category data:", res);
+      setCatData(res.categories || []);
+    });
+  }, []);
   const toggleCartPanel = (newOpen) => () => {
     setopenCartPanel(newOpen);
   };
@@ -89,18 +98,31 @@ function App() {
   };
 
   const handleClose = () => {
-    setOpenProduct(false);
+    setOpenProduct({
+      open: false,
+      item: {},
+    });
   };
+  const handleOpen = (status, item) => {
+    setOpenProduct({
+      open: status,
+      item,
+    });
+  };
+
   const values = {
     setOpenProduct,
     setopenCartPanel,
     openCartPanel,
     toggleCartPanel,
+    handleOpen,
     Alertbox,
     islogin,
     setislogin,
     setuserData,
     userData,
+    catData,
+    setCatData,
   };
   return (
     <>
@@ -115,7 +137,7 @@ function App() {
               element={<Productlisting />}
             />
             <Route
-              path="/productdetails"
+              path="/productdetails/:id"
               exact={true}
               element={<ProductDetails />}
             />
@@ -137,7 +159,7 @@ function App() {
           <Footer />
 
           <Dialog
-            open={openProduct}
+            open={openProduct.open}
             onClose={handleClose}
             fullWidth={fullWidth}
             maxWidth={maxWidth}
@@ -146,7 +168,7 @@ function App() {
             className="productdetailsmodal"
           >
             <DialogContent>
-              <div className="flex items-center w-full productdetailsmodalcontainer relative">
+              <div className="flex items-center w-full productdetailsmodal container relative">
                 <Button
                   onClick={handleClose}
                   className="!w-[40px] !h-[40px] !min-w-[40px] !text-[25px] !rounded-full !text-black !absolute top-[15px] right-[0px]"
@@ -154,12 +176,17 @@ function App() {
                   {" "}
                   <RiCloseLine />
                 </Button>
-                <div className="col-1 w-[40%]">
-                  <Productzoom />
-                </div>
-                <div className="col-2 w-[60%] py-2 px-6 pr-1">
-                  <ProductModal />
-                </div>
+                {openProduct.item.length !== 0 && (
+                  <>
+                    {" "}
+                    <div className="col-1 w-[40%]">
+                      <Productzoom images={openProduct.item.images} />
+                    </div>
+                    <div className="col-2 w-[60%] py-2 px-6 pr-1">
+                      <ProductModal item={openProduct.item} />
+                    </div>
+                  </>
+                )}
               </div>
             </DialogContent>
           </Dialog>
