@@ -61,6 +61,7 @@ export default function Header() {
         context.setislogin(false);
         localStorage.removeItem("accesstoken");
         localStorage.removeItem("refreshtoken");
+        context.setCatData([]);
         history("/");
       } else {
         context.setislogin(true);
@@ -244,7 +245,10 @@ export default function Header() {
                         context.setopenCartPanel(true);
                       }}
                     >
-                      <StyledBadge badgeContent={4} color="secondary">
+                      <StyledBadge
+                        badgeContent={context?.cartData?.length}
+                        color="secondary"
+                      >
                         <MdOutlineShoppingCart />
                       </StyledBadge>
                     </IconButton>

@@ -296,14 +296,24 @@ export default function Footer() {
         className=" cartpanel"
       >
         <div className="flex items-center justify-between py-3 px-4 gap-3 border-b border-[rgba(0,0,0,0.1)]">
-          <h4>Shopping Cart</h4>
+          <h4>Shopping Cart({context.cartData?.length})</h4>
           <MdClose
             className="text-[20px] cursor-pointer"
             onClick={context.toggleCartPanel(false)}
           />
         </div>
 
-        <CartPanel />
+        {context.cartData?.length > 0 ? (
+          <div className="scroll w-full max-h-[300px] overflow-y-scroll overflow-x-hidden py-3 px-4">
+            <CartPanel data={context.cartData} />
+          </div>
+        ) : (
+          <div className="flex flex-col items-center justify-center h-full gap-5">
+            <img src="src\assets\emptycart.png" alt="" />
+            <h4 className="text-[14px]">Your Cart is Empty</h4>
+          </div>
+        )}
+        {/* <data={context.cartData} /> */}
       </Drawer>
     </>
   );

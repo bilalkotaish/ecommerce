@@ -9,6 +9,10 @@ import { postData } from "../../utils/api";
 import { myContext } from "../../App";
 import CircularProgress from "@mui/material/CircularProgress";
 import { useNavigate } from "react-router-dom";
+import { getAuth, signInWithPopup, GoogleAuthProvider } from "firebase/auth";
+import { firebaseapp } from "../../firebase";
+const auth = getAuth(firebaseapp);
+const Googleprovider = new GoogleAuthProvider();
 
 export default function Register() {
   const context = useContext(myContext);
@@ -64,6 +68,43 @@ export default function Register() {
         setisLoading(false);
       }
     });
+  };
+
+  const authWithGoogle = () => {
+    signInWithPopup(auth, Googleprovider)
+      .then((result) => {
+        const credential = GoogleAuthProvider.credentialFromResult(result);
+        const token = credential.accessToken;
+        const user = result.user;
+        console.log("Logged in user:", user);
+
+        const field = {
+          name: user.displayName,
+          email: user.email,
+          password: null,
+          Avatar: user.photoURL,
+          Mobile: user.phoneNumber,
+          Role: "User",
+        };
+
+        postData("/api/user/googleauth", field).then((res) => {
+          if (!res.error) {
+            localStorage.setItem("userEmail", field.email);
+            localStorage.setItem("accesstoken", res.data.accesstoken);
+            localStorage.setItem("refreshtoken", res.data.refreshToken);
+            context.setislogin(true);
+
+            context.Alertbox("success", res.message);
+
+            history("/");
+          } else {
+            context.Alertbox("error", res.message);
+          }
+        });
+      })
+      .catch((error) => {
+        console.error("Google Auth Error:", error);
+      });
   };
 
   return (
@@ -163,7 +204,10 @@ export default function Register() {
                 {" "}
                 Or Continue With Social Accounts
               </p>
-              <Button className="w-full !mt-3 gap-3 !bg-[#f1f1f1] !text-black">
+              <Button
+                className="w-full !mt-3 gap-3 !bg-[#f1f1f1] !text-black"
+                onClick={authWithGoogle}
+              >
                 <FcGoogle /> Sign In With Google
               </Button>
             </form>

@@ -17,7 +17,7 @@ export default function ProductSlider(props) {
           props.data?.map((item, index) => {
             return (
               <SwiperSlide key={index}>
-                <div className="item h-[390px] w-[100%] flex">
+                <div className="item h-[450px] w-[100%] flex">
                   <ProductItem item={item} />
                 </div>
               </SwiperSlide>

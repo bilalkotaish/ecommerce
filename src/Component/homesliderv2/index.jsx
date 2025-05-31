@@ -29,7 +29,7 @@ export default function Homev2(props) {
               <div className="w-full rounded-md item overflow-hidden ">
                 <img src={item?.bannerImage[0]} />
                 <div
-                  className="info absolute top-0 -right-[100%] w-[50%] opacity-0 duration-700 
+                  className="info absolute top-0  -right-[100%] w-[50%] opacity-0 duration-700 
             transition-all h-[100%] z-50 p-8 items-center flex flex-col justify-center"
                 >
                   <h4 className="text-[20px] w-full font-[500] text-left opacity-0 relative -right-[100%] ">

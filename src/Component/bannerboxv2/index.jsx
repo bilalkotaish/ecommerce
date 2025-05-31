@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 export default function Bannerboxv2(props) {
   return (
     <>
-      <div className="bannerboxv2 w-full rounded-md group overflow-hidden relative">
+      <div className="bannerboxv2 w-[full] rounded-md group overflow-hidden relative">
         <img
           src={props.image}
           alt=""

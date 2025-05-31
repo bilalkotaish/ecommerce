@@ -20,8 +20,8 @@ export default function Navigation() {
     setisOpenCatPanel(true);
   };
   useEffect(() => {
-    setCatData(context.catData || []);
-  }, [context.catData]);
+    setCatData(context?.catData || []);
+  }, [context?.catData]);
   return (
     <>
       <nav>
@@ -56,7 +56,7 @@ export default function Navigation() {
                   return (
                     <li className="list-none relative group " key={item._id}>
                       <Link
-                        to={`/category/${item._id}`}
+                        to={`/products?catId=${item._id}`}
                         className="link transition text-[13px] font-[500] hover:text-primary"
                       >
                         <Button className="!py-4 font-[500] !text-current hover:!bg-gray-100 w-full text-left">
@@ -72,9 +72,14 @@ export default function Navigation() {
                                   className="relative group/sub link list-none"
                                   key={child._id}
                                 >
-                                  <Button className="text-black w-full flex !justify-start !text-left">
-                                    {child.name}
-                                  </Button>
+                                  <Link
+                                    to={`/products?subcatId=${child._id}`}
+                                    className="link transition text-[13px] font-[500] hover:text-primary"
+                                  >
+                                    <Button className="text-black w-full flex !justify-start !text-left">
+                                      {child.name}
+                                    </Button>
+                                  </Link>
                                   {child.children.length !== 0 && (
                                     <div className="absolute top-0 left-full w-[200px] bg-white shadow-md opacity-0 invisible group-hover/sub:opacity-100 group-hover/sub:visible transition-all z-50">
                                       <ul>
@@ -84,9 +89,14 @@ export default function Navigation() {
                                               className="list-none"
                                               key={subchild._id}
                                             >
-                                              <Button className="text-black w-full text-left">
-                                                {subchild.name}
-                                              </Button>
+                                              <Link
+                                                to={`/products?subsubcatId=${subchild._id}`}
+                                                className="link transition text-[13px] font-[500] hover:text-primary"
+                                              >
+                                                <Button className="text-black w-full text-left">
+                                                  {subchild.name}
+                                                </Button>
+                                              </Link>
                                             </li>
                                           );
                                         })}

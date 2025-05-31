@@ -30,7 +30,7 @@ import Myaccount from "./Pages/Myaccount";
 import Listitems from "./Component/Mylist/Listitems";
 import MyList from "./Component/Mylist";
 import Orders from "./Pages/Orders";
-import { fetchData } from "./utils/api";
+import { fetchData, postData } from "./utils/api";
 import Address from "./Pages/Myaccount/address";
 
 export const myContext = createContext();
@@ -46,6 +46,7 @@ function App() {
   const [islogin, setislogin] = useState(false);
   const [userData, setuserData] = useState(null);
   const [catData, setCatData] = useState([]);
+  const [cartData, setCartData] = useState([]);
 
   const Alertbox = (status, msg) => {
     if (status === "success") {
@@ -91,6 +92,7 @@ function App() {
     } else {
       setislogin(false);
     }
+    getCart();
   }, []);
 
   const handleClickOpen = () => {
@@ -110,6 +112,57 @@ function App() {
     });
   };
 
+  const AddtoCart = (product, userId, quantity) => {
+    if (!userId) {
+      Alertbox("error", "Please Login First");
+      return;
+    }
+
+    console.log("product:", product);
+    console.log("userId:", userId);
+    console.log("quantity:", quantity);
+    console.log("product.price:", product.price);
+
+    const subTotal = Number(product.price) * Number(quantity);
+    console.log("subTotal:", subTotal); // Must NOT be null or NaN
+
+    const Data = {
+      ProductTitle: product.name,
+      image: product?.images?.[0]?.url,
+      productId: product._id,
+      quantity: Number(quantity),
+      price: Number(product.price),
+      subTotal: subTotal,
+      countInStock: product.countInStock,
+      rating: product.rating,
+      userId: userId,
+      cartData,
+      size: product.size,
+      weight: product.productweight,
+      ram: product.productRam,
+    };
+
+    console.log("Final data:", Data); // ✅ Check this before sending
+
+    postData("/api/cart/add", Data).then((res) => {
+      if (res.error) {
+        Alertbox("error", res.message);
+      } else {
+        Alertbox("success", res.message);
+        getCart();
+      }
+    });
+  };
+  const getCart = () => {
+    fetchData(`/api/cart/getCart`).then((res) => {
+      if (res.error) {
+        Alertbox("error", res.message);
+      } else {
+        setCartData(res.data);
+      }
+    });
+  };
+
   const values = {
     setOpenProduct,
     setopenCartPanel,
@@ -118,11 +171,15 @@ function App() {
     handleOpen,
     Alertbox,
     islogin,
+    AddtoCart,
     setislogin,
     setuserData,
     userData,
     catData,
     setCatData,
+    cartData,
+    setCartData,
+    getCart,
   };
   return (
     <>
@@ -131,11 +188,7 @@ function App() {
           <Header />
           <Routes>
             <Route path="/" exact={true} element={<Home />} />
-            <Route
-              path="/productlist"
-              exact={true}
-              element={<Productlisting />}
-            />
+            <Route path="/products" exact={true} element={<Productlisting />} />
             <Route
               path="/productdetails/:id"
               exact={true}

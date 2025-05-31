@@ -5,8 +5,9 @@ import Rating from "@mui/material/Rating";
 import { Button } from "@mui/material";
 import { Link } from "react-router-dom";
 import Qtybox from "../../Component/Qtybox";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { CiShare1 } from "react-icons/ci";
+import { fetchData } from "../../utils/api";
 
 export default function ProductModal(props) {
   const [buttonindex, setbuttonindex] = useState(null);
@@ -22,6 +23,22 @@ export default function ProductModal(props) {
   const handleclickweight = (index) => {
     setbuttonindex2(index);
   };
+
+  const [ReviewsCount, setReviewsCount] = useState(0);
+
+  useEffect(() => {
+    fetchData(`/api/user/Reviews?productId=${props.item?._id}`)
+      .then((res) => {
+        if (res?.success) {
+          setReviewsCount(res?.data?.length || 0);
+        } else {
+          setReviewsCount(0);
+        }
+      })
+      .catch(() => {
+        setReviewsCount(0);
+      });
+  }, [props.item?._id]);
 
   return (
     <div className="content w-full md:w-[100%] px-4 md:px-8 lg:px-12">
@@ -42,7 +59,7 @@ export default function ProductModal(props) {
             className="!text-yellow-500"
           />
           <span className="text-xs text-gray-600 ml-1">
-            ({props.item?.reviews || 0} reviews)
+            ({ReviewsCount || `No reviews`})Reviews
           </span>
         </div>
         <div className="text-sm text-gray-600 bg-gray-100 px-3 py-1 rounded-full">

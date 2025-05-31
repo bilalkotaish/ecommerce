@@ -11,10 +11,19 @@ import Menu from "@mui/material/Menu";
 import MenuItem from "@mui/material/MenuItem";
 import { useState } from "react";
 import Pagination from "@mui/material/Pagination";
+import ProductLoaderGrid from "../../Component/Productloader/productLoadergrid.jsx";
+import { FaAngleDown } from "react-icons/fa";
+import { FaAngleUp } from "react-icons/fa";
+import { postData } from "../../utils/api.js";
 
 export default function Productlisting() {
   const [anchorEl, setAnchorEl] = useState(null);
   const [ItemView, SetItemView] = useState("grid");
+  const [productData, setproductData] = useState([]);
+  const [isLoading, setisLoading] = useState(false);
+  const [page, setpage] = useState(1);
+  const [Totalpage, setTotalpage] = useState(1);
+  const [sort, setSort] = useState("Name A-Z");
 
   const open = Boolean(anchorEl);
   const handleClick = (event) => {
@@ -22,6 +31,21 @@ export default function Productlisting() {
   };
   const handleClose = () => {
     setAnchorEl(null);
+  };
+  const handleSortBy = (name, order, products, value) => {
+    setSort(value);
+
+    const plainArray = Array.isArray(products) ? products : products?.products;
+
+    postData("/api/product/Sort", {
+      products: plainArray,
+      sortBy: name,
+      order: order,
+    }).then((res) => {
+      console.log(res);
+      setproductData(res.data);
+      setAnchorEl(null);
+    });
   };
 
   return (
@@ -35,7 +59,7 @@ export default function Productlisting() {
             <Link
               underline="hover"
               color="inherit"
-              href="/material-ui/getting-started/installation/"
+              // to={`/products?catId=${item._id}`}
               className="link"
             >
               Fashion
@@ -46,12 +70,21 @@ export default function Productlisting() {
 
       <div className="bg-white p-2 mt-3 ">
         <div className="container flex gap-3">
-          <div className="sidebarwrapper w-[20%] h-[100%] bg-white p-3">
-            <Sidebar />
+          <div className="sidebarwrapper w-[20%]  bg-white p-3">
+            <Sidebar
+              productData={productData}
+              setproductData={setproductData}
+              isLoading={isLoading}
+              setisLoading={setisLoading}
+              page={page}
+              setpage={setpage}
+              Totalpage={Totalpage}
+              setTotalpage={setTotalpage}
+            />
           </div>
           <div className="rightcontent w-[80%] py-3">
-            <div className="p-2 w-full bg-[#f1f1f1] mb-4 rounded-md flex items-center justify-between">
-              <div className="col-1 flex items-center gap-0 itemViewActions">
+            <div className="p-2 w-full sticky top-0 right-0 z-10 bg-[#f1f1f1] mb-4 rounded-md flex items-center justify-between">
+              <div className="col-1 flex  items-center gap-0 itemViewActions">
                 <Button
                   className={`!w-[40px] !h-[40px] !rounded-full !text-black ${
                     ItemView === "list" && "active"
@@ -74,65 +107,77 @@ export default function Productlisting() {
                 </Button>
                 <span className="text-[14px] font-[400] text-[rgba(0,0,0,0.5)]">
                   {" "}
-                  There are 10 products Available{" "}
+                  There are {productData?.length} products Available{" "}
                 </span>
               </div>
 
-              <div className="col-2 ml-auto flex items-center justify-end">
-                <span className="text-[14px] font-[600] text-[rgba(0,0,0,0.5)]">
+              <div className="col-2 ml-auto flex items-center justify-end gap-2">
+                <span className="text-sm font-semibold text-gray-500">
                   Sort by
                 </span>
+
                 <Button
                   id="basic-button"
                   aria-controls={open ? "basic-menu" : undefined}
                   aria-haspopup="true"
                   aria-expanded={open ? "true" : undefined}
                   onClick={handleClick}
-                  className="!text-[12px] !text-black !bg-white !capitalize !border-2 !border-[#000]"
+                  className="!text-sm !text-gray-800 !bg-white !capitalize !border !border-gray-300 !shadow-sm hover:!bg-gray-100"
+                  endIcon={open ? <FaAngleUp /> : <FaAngleDown />}
                 >
-                  Sales,highest to lowest
+                  {sort}
                 </Button>
+
                 <Menu
                   id="basic-menu"
                   anchorEl={anchorEl}
                   open={open}
                   onClose={handleClose}
+                  PaperProps={{
+                    className: "!bg-white !shadow-lg !rounded-md",
+                  }}
                 >
                   <MenuItem
-                    onClick={handleClose}
-                    className="!text-[12px] !text-black !bg-white !capitalize !border-2 !border-[#000]"
+                    onClick={() => {
+                      handleSortBy("name", "asc", productData, "Name A-Z");
+                    }}
+                    className="!text-sm !text-gray-800 hover:!bg-gray-100"
                   >
-                    Sales,highest to lowest
+                    Name A-Z
                   </MenuItem>
                   <MenuItem
-                    onClick={handleClose}
-                    className="!text-[12px] !text-black !bg-white !capitalize !border-2 !border-[#000]"
+                    onClick={() => {
+                      handleSortBy("name", "desc", productData, "Name Z-A");
+                    }}
+                    className="!text-sm !text-gray-800 hover:!bg-gray-100"
                   >
-                    Relevance
+                    Name Z-A
                   </MenuItem>
                   <MenuItem
-                    onClick={handleClose}
-                    className="!text-[12px] !text-black !bg-white !capitalize !border-2 !border-[#000]"
+                    onClick={() => {
+                      handleSortBy(
+                        "price",
+                        "asc",
+                        productData,
+                        "Price Low to High"
+                      );
+                    }}
+                    className="!text-sm !text-gray-800 hover:!bg-gray-100"
                   >
-                    Name , A to Z{" "}
+                    Price Low to High
                   </MenuItem>
                   <MenuItem
-                    onClick={handleClose}
-                    className="!text-[12px] !text-black !bg-white !capitalize !border-2 !border-[#000]"
+                    onClick={() => {
+                      handleSortBy(
+                        "price",
+                        "desc",
+                        productData,
+                        "Price High to Low"
+                      );
+                    }}
+                    className="!text-sm !text-gray-800 hover:!bg-gray-100"
                   >
-                    Name , Z to A{" "}
-                  </MenuItem>
-                  <MenuItem
-                    onClick={handleClose}
-                    className="!text-[12px] !text-black !bg-white !capitalize !border-2 !border-[#000]"
-                  >
-                    Price , highest to lowest{" "}
-                  </MenuItem>
-                  <MenuItem
-                    onClick={handleClose}
-                    className="!text-[12px] !text-black !bg-white !capitalize !border-2 !border-[#000]"
-                  >
-                    Name , lowest to highest{" "}
+                    Price High to Low
                   </MenuItem>
                 </Menu>
               </div>
@@ -140,39 +185,44 @@ export default function Productlisting() {
             <div
               className={`grid gap-4 ${
                 ItemView === "grid"
-                  ? "grid-cols-2 sm:grid-cols-3 md:grid-cols-4"
-                  : "grid-cols-1"
+                  ? "grid-cols-5 sm:grid-cols-3 md:grid-cols-5"
+                  : "grid-cols-1 sm:grid-cols-1 md:grid-cols-1"
               }`}
             >
               {ItemView === "grid" ? (
                 <>
-                  <ProductItem />
-                  <ProductItem />
-                  <ProductItem />
-                  <ProductItem />
-                  <ProductItem />
-                  <ProductItem />
-                  <ProductItem />
-                  <ProductItem />
-                  <ProductItem />
-                  <ProductItem />
+                  {isLoading === true ? (
+                    <ProductLoaderGrid view={ItemView} />
+                  ) : (
+                    productData?.map((item, index) => (
+                      <ProductItem key={index} item={item} />
+                    ))
+                  )}
                 </>
               ) : (
                 <>
-                  <ProductItemListView />
-                  <ProductItemListView />
-                  <ProductItemListView />
-                  <ProductItemListView />
-                  <ProductItemListView />
-                  <ProductItemListView />
+                  {isLoading === true ? (
+                    <ProductLoaderGrid view={ItemView} />
+                  ) : (
+                    productData?.map((item, index) => (
+                      <ProductItemListView key={index} item={item} />
+                    ))
+                  )}
                 </>
               )}
             </div>
+
             <Pagination
-              className=" flex justify-center mt-3 items-center"
-              count={10}
+              className="flex justify-center mt-3 items-center"
+              count={Totalpage}
+              color="primary"
+              showFirstButton
+              showNextButton
               hidePrevButton
-              hideNextButton
+              page={page}
+              onChange={(e, page) => {
+                setpage(page);
+              }}
             />
           </div>
         </div>

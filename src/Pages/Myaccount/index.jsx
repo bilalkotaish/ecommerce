@@ -259,20 +259,22 @@ export default function Myaccount() {
                 </div>
                 <form className="mt-8 " onSubmit={handlesubmitChange}>
                   <div className="flex items-center  gap-5 ">
-                    <div className="w-[50%]">
-                      <TextField
-                        label="oldPassword"
-                        type="password"
-                        variant="outlined"
-                        disabled={isLoading2}
-                        value={changePassword.oldPassword}
-                        size="small"
-                        className="w-full"
-                        name="oldPassword"
-                        onChange={onChangeInput}
-                      />
-                    </div>
-                    <div className="w-[50%] h-auto">
+                    {context.userData?.SignUpGoogle === false && (
+                      <div className="col">
+                        <TextField
+                          label="oldPassword"
+                          type="password"
+                          variant="outlined"
+                          disabled={isLoading2}
+                          value={changePassword.oldPassword}
+                          size="small"
+                          className="w-full"
+                          name="oldPassword"
+                          onChange={onChangeInput}
+                        />
+                      </div>
+                    )}
+                    <div className="col h-auto">
                       <TextField
                         disabled={isLoading2}
                         value={changePassword.password}
@@ -287,7 +289,7 @@ export default function Myaccount() {
                     </div>
                   </div>
                   <div className="flex items-center mt-3 gap-5 ">
-                    <div className="w-[50%]">
+                    <div className="col">
                       <TextField
                         label="confirmPassword"
                         variant="outlined"
@@ -305,11 +307,7 @@ export default function Myaccount() {
                   <br />
 
                   <div className="flex items-center gap-5">
-                    <Button
-                      type="submit"
-                      disabled={!validValue2}
-                      className="btn-org w-[200px] h-auto"
-                    >
+                    <Button type="submit" className="btn-org w-[200px] h-auto">
                       {" "}
                       Change Password
                       {isLoading === true ? (

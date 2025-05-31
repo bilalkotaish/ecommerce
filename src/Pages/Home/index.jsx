@@ -26,6 +26,9 @@ export default function Home() {
   const [bannerData, setBannerData] = useState([]);
   const [popproductData, setpopProductData] = useState([]);
   const [allproductData, setallProductData] = useState([]);
+  const [bannersv1, setBannersv1] = useState([]);
+  const [BlogData, setBlogData] = useState([]);
+
   const [Featured, setFeatured] = useState([]);
   const context = useContext(myContext);
 
@@ -33,7 +36,7 @@ export default function Home() {
     setCatData(context.catData || []);
     fetchData("/api/homebanner/get").then((res) => {
       console.log("Fetched Home Banner data:", res);
-      setBannerData(res.data || []);
+      setBannerData(res.banners || []);
       console.log(bannerData);
     });
     fetchData("/api/product/products").then((res) => {
@@ -47,6 +50,15 @@ export default function Home() {
       console.log("Fetched Featured Product data:", res);
       setFeatured(res.data || []);
     });
+    fetchData("/api/bannerv1/get").then((res) => {
+      console.log("Banner response:", res);
+      setBannersv1(res.data || []);
+    });
+    fetchData("/api/blog/get").then((res) => {
+      console.log("Fetched Blog data:", res);
+      setBlogData(res.data || []);
+    });
+    window.scrollTo(0, 0);
   }, [context.catData]);
   const handleChange = (event, newValue) => {
     setValue(newValue);
@@ -128,8 +140,7 @@ export default function Home() {
               <p className="text-[20px] mb-0 font-[600]">Shop Now</p>
             </div>
           </div>
-
-          <Adsslider items={4} />
+          {bannersv1.length !== 0 && <Adsslider data={bannersv1} />}
         </div>
       </section>
 
@@ -145,7 +156,7 @@ export default function Home() {
             <ProductSlider items={5} data={allproductData} />
           )}
 
-          <Adsslider items={4} />
+          {bannersv1.length !== 0 && <Adsslider data={bannersv1} />}
         </div>
       </section>
       <section className="bg-white py-5">
@@ -158,39 +169,32 @@ export default function Home() {
           {Featured.length === 0 && <ProductLoader />}
           {Featured.length !== 0 && <ProductSlider items={5} data={Featured} />}
 
-          <Adsslider items={4} />
+          {bannersv1.length !== 0 && <Adsslider data={bannersv1} />}
         </div>
       </section>
+      {BlogData.length !== 0 && (
+        <section className="bg-white blogsection pb-8 py-5 pt-0">
+          <div className="py-5 container">
+            <h2 className="text-[25px] font-[600]">Latest Blogs</h2>
 
-      <section className="bg-white blogsection pb-8 py-5 pt-0">
-        <div className="py-5 container">
-          <h2 className="text-[25px] font-[600]">Latest Blogs</h2>
-
-          <Swiper
-            slidesPerView={4}
-            spaceBetween={30}
-            navigation={true}
-            modules={[Navigation]}
-            className="swiperblog"
-          >
-            <SwiperSlide>
-              <Blogitem />
-            </SwiperSlide>
-            <SwiperSlide>
-              <Blogitem />
-            </SwiperSlide>
-            <SwiperSlide>
-              <Blogitem />
-            </SwiperSlide>
-            <SwiperSlide>
-              <Blogitem />
-            </SwiperSlide>
-            <SwiperSlide>
-              <Blogitem />
-            </SwiperSlide>
-          </Swiper>
-        </div>
-      </section>
+            <Swiper
+              slidesPerView={4}
+              spaceBetween={30}
+              navigation={true}
+              modules={[Navigation]}
+              className="swiperblog"
+            >
+              {BlogData.map((item, index) => {
+                return (
+                  <SwiperSlide key={index}>
+                    <Blogitem item={item} />
+                  </SwiperSlide>
+                );
+              })}
+            </Swiper>
+          </div>
+        </section>
+      )}
     </div>
   );
 }

@@ -4,7 +4,12 @@ import { useState } from "react";
 
 import { IoMdClose } from "react-icons/io";
 import CartItems from "./CartItems";
+import { useContext } from "react";
+import { myContext } from "../../App";
 export default function Cart() {
+  const context = useContext(myContext);
+  window.scrollTo(0, 0);
+
   return (
     <section className="section py-10 pb-10">
       <div className="container w-[80%] max-w-[80%] flex gap-5">
@@ -15,11 +20,21 @@ export default function Cart() {
               <p className="mt-0">
                 {" "}
                 There are{" "}
-                <span className="text-primary font-bold">1 Product</span> In
-                Your Cart
+                <span className="text-primary font-bold">
+                  {context.cartData.length} Product
+                </span>{" "}
+                In Your Cart
               </p>
             </div>
-            <CartItems size="S" qty="1" />
+            {context.cartData.length === 0 ? (
+              <div className=" text-center text-[14px] font-[500] text-[#0000007a]">
+                No Item Found
+              </div>
+            ) : (
+              context.cartData.map((item) => {
+                return <CartItems size="S" qty={item.quantity} data={item} />;
+              })
+            )}
           </div>
         </div>
 
@@ -30,7 +45,14 @@ export default function Cart() {
             <div className="space-y-2 pb-4">
               <p className="flex items-center justify-between">
                 <span className="text-[14px] font-[400]">Subtotal</span>
-                <span className="text-[14px] font-bold text-primary">25$</span>
+                <span className="text-[14px] font-bold text-primary">
+                  {context.cartData.length !== 0
+                    ? context.cartData
+                        .map((item) => parseInt(item.price) * item.quantity)
+                        .reduce((total, value) => total + value, 0)
+                    : 0}
+                  $
+                </span>
               </p>
               <p className="flex items-center justify-between">
                 <span className="text-[14px] font-[400]">Shipping</span>
@@ -42,7 +64,14 @@ export default function Cart() {
               </p>
               <p className="flex items-center justify-between">
                 <span className="text-[14px] font-[400]">Total</span>
-                <span className="text-[14px] font-bold text-primary">25$</span>
+                <span className="text-[14px] font-bold text-primary">
+                  {context.cartData.length !== 0
+                    ? context.cartData
+                        .map((item) => parseInt(item.price) * item.quantity)
+                        .reduce((total, value) => total + value, 0)
+                    : 0}
+                  $
+                </span>
               </p>
             </div>
 
