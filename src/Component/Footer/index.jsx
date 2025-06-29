@@ -9,7 +9,7 @@ import { Button } from "@mui/material";
 import FormGroup from "@mui/material/FormGroup";
 import FormControlLabel from "@mui/material/FormControlLabel";
 import Checkbox from "@mui/material/Checkbox";
-import { FaInstagram } from "react-icons/fa";
+import { FaInstagram, FaWhatsapp } from "react-icons/fa";
 import { FaFacebookF } from "react-icons/fa";
 import { FiYoutube } from "react-icons/fi";
 import { RiTwitterXFill } from "react-icons/ri";
@@ -19,9 +19,11 @@ import { myContext } from "../../App";
 import Drawer from "@mui/material/Drawer";
 import CartPanel from "../CartPanel";
 import { MdClose } from "react-icons/md";
+import AddressPanel from "../../Pages/Myaccount/addressPanel";
 
 export default function Footer() {
   const context = useContext(myContext);
+
   return (
     <>
       <footer>
@@ -149,43 +151,43 @@ export default function Footer() {
                 <h2 className="text-[18px] font-[600] mb-4">Our Company</h2>
                 <ul className="list">
                   <li className="list-none text-[14px] w-full mb-2">
-                    <Link to="/" className="link">
+                    <Link to="/delivery" className="link">
                       {" "}
                       Delivery
                     </Link>
                   </li>
                   <li className="list-none text-[14px] w-full mb-2">
-                    <Link to="/" className="link">
+                    <Link to="/legalnotice" className="link">
                       {" "}
                       legal Notice
                     </Link>
                   </li>
                   <li className="list-none text-[14px] w-full mb-2">
-                    <Link to="/" className="link">
+                    <Link to="/terms" className="link">
                       {" "}
                       Terms & Conditions of use
                     </Link>
                   </li>
                   <li className="list-none text-[14px] w-full mb-2">
-                    <Link to="/" className="link">
+                    <Link to="/contactus" className="link">
                       {" "}
                       Contact us
                     </Link>
                   </li>
                   <li className="list-none text-[14px] w-full mb-2">
-                    <Link to="/" className="link">
+                    <Link to="/aboutus" className="link">
                       {" "}
                       About Us
                     </Link>
                   </li>
                   <li className="list-none text-[14px] w-full mb-2">
-                    <Link to="/" className="link">
+                    <Link to="/securepayment" className="link">
                       {" "}
                       Secure Payments
                     </Link>
                   </li>
                   <li className="list-none text-[14px] w-full mb-2">
-                    <Link to="/" className="link">
+                    <Link to="/login" className="link">
                       {" "}
                       Login
                     </Link>
@@ -196,89 +198,93 @@ export default function Footer() {
 
             <div className="part3 w-[35%] mt-5 !pr-8 !pl-8 flex flex-col">
               <h2 className="text-[18px] font-[600] mb-4">
-                Subscribe To Our Newsletter
+                Join Our WhatsApp Group
               </h2>
               <p className="text-[12px]">
-                {" "}
-                Subscribe To Our Newsletter To Get News
-                <br /> About Our New Offers
+                Be the first to know about our latest offers, products,
+                <br /> and updates. Join our WhatsApp community!
               </p>
-              <form className="mt-5">
-                <input
-                  type="email "
-                  placeholder=" Your Email Address"
-                  className=" border outline-none w-[70%] pl-4 pr-15 mb-4 h-[35px] rounded-sm focus:border([rgba(0,0,0,0.1)])"
-                />
-                <div>
-                  {" "}
-                  <Button className="btn-org ">Subscribe</Button>
-                </div>
-                <div>
-                  <FormControlLabel
-                    control={<Checkbox />}
-                    label="I accept the terms and condition of use"
-                    className="mt-1 !text-[12px]"
-                  />
-                </div>
-              </form>
+
+              <div className="mt-5">
+                <Button
+                  className="btn-org"
+                  onClick={() =>
+                    window.open(
+                      "https://chat.whatsapp.com/your-invite-link",
+                      "_blank"
+                    )
+                  }
+                >
+                  Join WhatsApp Group
+                </Button>
+              </div>
             </div>
           </div>
         </div>
       </footer>
       <div className="bottomstrip border-t bg-white py-3 border-[rgba(0,0,0,0.1)]">
-        <div className="container flex items-center justify-between">
+        <div className="container flex flex-col md:flex-row items-center justify-between gap-3">
+          {/* Social Media Icons */}
           <ul className="flex items-center gap-2">
-            <li className="list-none">
-              <Link
-                to="/"
-                target="/black"
-                className="w-[35px] h-[35px] border border-[rgba(0,0,0,0.1)] flex items-center justify-center hover:bg-primary group rounded-full"
+            <li>
+              <a
+                href="https://instagram.com/yourhandle"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="w-[35px] h-[35px] border border-[rgba(0,0,0,0.1)] flex items-center justify-center hover:bg-pink-500 group rounded-full"
               >
-                <FaInstagram className="text-15px group-hover:text-white" />
-              </Link>
+                <FaInstagram className="text-[15px] group-hover:text-white" />
+              </a>
             </li>
-            <li className="list-none">
-              <Link
-                to="/"
-                target="/black"
-                className="w-[35px] h-[35px] border border-[rgba(0,0,0,0.1)] flex items-center justify-center hover:bg-primary group rounded-full"
+            <li>
+              <a
+                href="https://facebook.com/yourpage"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="w-[35px] h-[35px] border border-[rgba(0,0,0,0.1)] flex items-center justify-center hover:bg-blue-500 group rounded-full"
               >
-                <FaFacebookF className="text-15px group-hover:text-white" />
-              </Link>
+                <FaFacebookF className="text-[15px] group-hover:text-white" />
+              </a>
             </li>
-            <li className="list-none">
-              <Link
-                to="/"
-                target="/black"
-                className="w-[35px] h-[35px] border border-[rgba(0,0,0,0.1)] flex items-center justify-center hover:bg-primary group rounded-full"
+
+            <li>
+              <a
+                href="https://twitter.com/yourhandle"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="w-[35px] h-[35px] border border-[rgba(0,0,0,0.1)] flex items-center justify-center hover:bg-blue-500 group rounded-full"
               >
-                <FiYoutube className="text-15px group-hover:text-white" />
-              </Link>
+                <RiTwitterXFill className="text-[15px] group-hover:text-white" />
+              </a>
             </li>
-            <li className="list-none">
-              <Link
-                to="/"
-                target="/black"
-                className="w-[35px] h-[35px] border border-[rgba(0,0,0,0.1)] flex items-center justify-center hover:bg-primary group rounded-full"
+            <li>
+              <a
+                href="https://github.com/yourhandle"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="w-[35px] h-[35px] border border-[rgba(0,0,0,0.1)] flex items-center justify-center hover:bg-black group rounded-full"
               >
-                <RiTwitterXFill className="text-15px group-hover:text-white" />
-              </Link>
+                <FaGithub className="text-[15px] group-hover:text-white" />
+              </a>
             </li>
-            <li className="list-none">
-              <Link
-                to="/"
-                target="/black"
-                className="w-[35px] h-[35px] border border-[rgba(0,0,0,0.1)] flex items-center justify-center hover:bg-primary group rounded-full"
+            <li>
+              <a
+                href="https://chat.whatsapp.com/your-group-invite"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="w-[35px] h-[35px] border border-[rgba(0,0,0,0.1)] flex items-center justify-center hover:bg-green-500 group rounded-full"
               >
-                <FaGithub className="text-15px group-hover:text-white" />
-              </Link>
+                <FaWhatsapp className="text-[15px] group-hover:text-white" />
+              </a>
             </li>
           </ul>
 
-          <p className="text-gray-600 text-[12px] !text-center mb-0">
-            &copy; 23-4-2025 BillyEcommerceStore. All rights reserved.
+          {/* Copyright */}
+          <p className="text-gray-600 text-[12px] text-center">
+            &copy; 2025 BillyEcommerceStore. All rights reserved.
           </p>
 
+          {/* Payment Logos */}
           <div className="flex items-center">
             <img src="src\assets\carte_bleue.png" alt="" />
             <img src="src\assets\master_card.png" alt="" />
@@ -295,8 +301,10 @@ export default function Footer() {
         anchor="right"
         className=" cartpanel"
       >
-        <div className="flex items-center justify-between py-3 px-4 gap-3 border-b border-[rgba(0,0,0,0.1)]">
-          <h4>Shopping Cart({context.cartData?.length})</h4>
+        <div className="flex items-center  justify-between py-3 px-4 gap-3 border-b border-[rgba(0,0,0,0.1)]">
+          <h4 className="text-[16px] font-[600] items-center">
+            Your Shopping Cart ({context.cartData?.length})
+          </h4>
           <MdClose
             className="text-[20px] cursor-pointer"
             onClick={context.toggleCartPanel(false)}
@@ -311,9 +319,36 @@ export default function Footer() {
           <div className="flex flex-col items-center justify-center h-full gap-5">
             <img src="src\assets\emptycart.png" alt="" />
             <h4 className="text-[14px]">Your Cart is Empty</h4>
+            <Button
+              onClick={context.toggleCartPanel(false)}
+              className="mt-4 !bg-blue-400 !text-white hover:!bg-blue-600"
+            >
+              Continue Shopping
+            </Button>{" "}
           </div>
         )}
         {/* <data={context.cartData} /> */}
+      </Drawer>
+
+      {/* {Address panel} */}
+      <Drawer
+        open={context.openaddressPanel}
+        onClose={context.toggleaddressPanel(false)}
+        anchor="right"
+        className="addresspanel"
+      >
+        <div className="flex items-center  justify-between py-3 px-4 gap-3 border-b border-[rgba(0,0,0,0.1)]">
+          <h4 className="text-[16px] font-[600] items-center">
+            {context.addressmode === "add" ? "Add" : "Update"} Your Shipping
+            Address
+          </h4>
+          <MdClose
+            className="text-[20px] cursor-pointer"
+            onClick={context.toggleaddressPanel(false)}
+          />
+        </div>
+
+        <AddressPanel />
       </Drawer>
     </>
   );

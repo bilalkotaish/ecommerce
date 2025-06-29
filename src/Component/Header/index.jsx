@@ -62,6 +62,8 @@ export default function Header() {
         localStorage.removeItem("accesstoken");
         localStorage.removeItem("refreshtoken");
         context.setCatData([]);
+        context.setCartData([]);
+        context.setListData([]);
         history("/");
       } else {
         context.setislogin(true);
@@ -84,7 +86,7 @@ export default function Header() {
                 <ul className=" flex item-center gap-3">
                   <li className="list-none ">
                     <Link
-                      to="help-center"
+                      to="helpcenter"
                       className="text-[12px] link transition font-[500]"
                     >
                       Help Center
@@ -92,7 +94,7 @@ export default function Header() {
                   </li>
                   <li className="list-none">
                     <Link
-                      to="/ordertracking"
+                      to="/myorders"
                       className="text-[12px] link transition font-[500]"
                     >
                       Order Tracking
@@ -229,15 +231,6 @@ export default function Header() {
                 )}
 
                 <li>
-                  <Tooltip title="compare">
-                    <IconButton aria-label="cart">
-                      <StyledBadge badgeContent={4} color="secondary">
-                        <LuGitCompareArrows />
-                      </StyledBadge>
-                    </IconButton>
-                  </Tooltip>
-                </li>
-                <li>
                   <Tooltip title="cart">
                     <IconButton
                       aria-label="cart"
@@ -255,13 +248,18 @@ export default function Header() {
                   </Tooltip>
                 </li>
                 <li>
-                  <Tooltip title="wishlist">
-                    <IconButton aria-label="cart">
-                      <StyledBadge badgeContent={4} color="secondary">
-                        <FaRegHeart />
-                      </StyledBadge>
-                    </IconButton>
-                  </Tooltip>
+                  <Link to="/myList" className="w-full block">
+                    <Tooltip title="wishlist">
+                      <IconButton aria-label="cart">
+                        <StyledBadge
+                          badgeContent={context?.listData?.length}
+                          color="secondary"
+                        >
+                          <FaRegHeart />
+                        </StyledBadge>
+                      </IconButton>
+                    </Tooltip>
+                  </Link>
                 </li>
               </ul>
             </div>

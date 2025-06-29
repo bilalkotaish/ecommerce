@@ -9,14 +9,15 @@ import { BsFillGridFill } from "react-icons/bs";
 import { IoMdMenu } from "react-icons/io";
 import Menu from "@mui/material/Menu";
 import MenuItem from "@mui/material/MenuItem";
-import { useEffect, useState } from "react";
+import { useContext, useState } from "react";
 import Pagination from "@mui/material/Pagination";
 import ProductLoaderGrid from "../../Component/Productloader/productLoadergrid.jsx";
 import { FaAngleDown } from "react-icons/fa";
 import { FaAngleUp } from "react-icons/fa";
 import { postData } from "../../utils/api.js";
+import { myContext } from "../../App.jsx";
 
-export default function Productlisting() {
+export default function SearchPage() {
   const [anchorEl, setAnchorEl] = useState(null);
   const [ItemView, SetItemView] = useState("grid");
   const [productData, setproductData] = useState([]);
@@ -24,7 +25,8 @@ export default function Productlisting() {
   const [page, setpage] = useState(1);
   const [Totalpage, setTotalpage] = useState(1);
   const [sort, setSort] = useState("Name A-Z");
-  const [itemsPerPage, setItemsPerPage] = useState(20);
+  const context = useContext(myContext);
+
   const open = Boolean(anchorEl);
   const handleClick = (event) => {
     setAnchorEl(event.currentTarget);
@@ -44,6 +46,7 @@ export default function Productlisting() {
     }).then((res) => {
       console.log(res);
       setproductData(res.data);
+      context.setSearchData(res.data);
       setAnchorEl(null);
     });
   };

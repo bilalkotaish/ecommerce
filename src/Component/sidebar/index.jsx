@@ -43,6 +43,7 @@ export default function Sidebar(props) {
   };
 
   const handlechangecheckbox = (field, value) => {
+    context.setSearchData([]);
     const currentValue = filters[field] || [];
     const updatedValue = currentValue.includes(value)
       ? currentValue.filter((item) => item !== value)
@@ -93,13 +94,19 @@ export default function Sidebar(props) {
   // 2. Trigger API Call when Filters OR Page Change
   useEffect(() => {
     props.setisLoading(true);
-    postData("/api/product/filters", filters).then((res) => {
-      console.log("API Response:", res); // ✅ Check what you get here
-      props.setproductData(res.data);
+
+    if (context.searchData?.length > 0) {
+      props.setproductData(context.searchData);
       props.setisLoading(false);
-      props.setTotalpage(res.totalPages); // Make sure this line is correct
-    });
-  }, [filters]);
+    } else {
+      postData("/api/product/filters", filters).then((res) => {
+        console.log("API Response:", res);
+        props.setproductData(res.data);
+        props.setisLoading(false);
+        props.setTotalpage(res.totalPages);
+      });
+    }
+  }, [filters, context.searchData]);
 
   // 3. Update Filters on PriceRange Change
   useEffect(() => {
@@ -149,72 +156,6 @@ export default function Sidebar(props) {
           </div>
         </Collapse>
       </div>
-
-      {/* <div className="box mt-3">
-        <h3 className=" w-full text-[16px] mb-3 flex items-center font-[600] pr-3">
-          Availability{" "}
-          <Button
-            className="!text-black !w-[30px] !h-[30px] min-w-[30px] !ml-auto !rounded-full"
-            onClick={handleclick1}
-          >
-            {isOpen1 === true ? <FaAngleUp /> : <FaAngleDown />}{" "}
-          </Button>{" "}
-        </h3>
-        <Collapse isOpened={isOpen1}>
-          <div className="scroll px-4 relative -left-[10px]">
-            <FormControlLabel
-              control={<Checkbox defaultChecked size="small" />}
-              label="Available"
-              className="w-full"
-            />
-            <FormControlLabel
-              control={<Checkbox defaultChecked size="small" />}
-              label="Instock"
-              className="w-full"
-            />
-            <FormControlLabel
-              control={<Checkbox defaultChecked size="small" />}
-              label="Outstock"
-              className="w-full"
-            />
-          </div>
-        </Collapse>
-      </div>
-      <div className="box mt-3">
-        <h3 className=" w-full text-[16px] mb-3 flex items-center font-[600] pr-3">
-          Sizes{" "}
-          <Button
-            className="!text-black !w-[30px] !h-[30px] min-w-[30px] !ml-auto !rounded-full"
-            onClick={handleclick2}
-          >
-            {isOpen2 === true ? <FaAngleUp /> : <FaAngleDown />}{" "}
-          </Button>{" "}
-        </h3>
-        <Collapse isOpened={isOpen2}>
-          <div className="scroll px-4 relative -left-[10px]">
-            <FormControlLabel
-              control={<Checkbox defaultChecked size="small" />}
-              label="small"
-              className="w-full"
-            />
-            <FormControlLabel
-              control={<Checkbox defaultChecked size="small" />}
-              label="medium"
-              className="w-full"
-            />
-            <FormControlLabel
-              control={<Checkbox defaultChecked size="small" />}
-              label="large"
-              className="w-full"
-            />
-            <FormControlLabel
-              control={<Checkbox defaultChecked size="small" />}
-              label="x-large"
-              className="w-full"
-            />
-          </div>
-        </Collapse>
-      </div> */}
 
       <div className="box mt-4">
         <h3 className=" w-full text-[16px] mb-3 flex items-center font-[600] pr-3">

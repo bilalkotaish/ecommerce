@@ -1,7 +1,7 @@
 import { Link } from "react-router-dom";
 import Rating from "@mui/material/Rating";
 import Button from "@mui/material/Button";
-import { IoMdHeartEmpty } from "react-icons/io";
+import { IoMdHeart, IoMdHeartEmpty } from "react-icons/io";
 import { CiShare1 } from "react-icons/ci";
 import { IoExpandOutline } from "react-icons/io5";
 import Tooltip from "@mui/material/Tooltip";
@@ -11,6 +11,7 @@ import { FaMinus, FaPlus } from "react-icons/fa";
 import { useContext, useState, useEffect } from "react";
 import { myContext } from "../../App";
 import { deleteData, editData } from "../../utils/api";
+import { IoCloseSharp } from "react-icons/io5";
 
 export default function ProductItem(props) {
   const context = useContext(myContext);
@@ -104,7 +105,7 @@ export default function ProductItem(props) {
         _id: cartItems[0]?._id,
         qty: quantity - 1,
         subTotal: cartItems[0]?.price * (quantity - 1),
-        countInStock: cartItems[0]?.countInStock - quantity + 1,
+        // countInStock: cartItems[0]?.countInStock - quantity + 1,
       };
 
       editData(`/api/cart/updateCart`, obj).then((res) => {
@@ -125,7 +126,7 @@ export default function ProductItem(props) {
       _id: cartItems[0]?._id,
       qty: quantity + 1,
       subTotal: cartItems[0]?.price * (quantity + 1),
-      countInStock: cartItems[0]?.countInStock - (quantity + 1),
+      // countInStock: cartItems[0]?.countInStock - (quantity + 1),
     };
 
     editData(`/api/cart/updateCart`, obj).then((res) => {
@@ -149,6 +150,11 @@ export default function ProductItem(props) {
     } else if (type === "ram") {
       setSelectedTabRam(name);
     }
+  };
+
+  const handleWishlist = (item) => {
+    context.handleWishlist(item);
+    context.getList();
   };
 
   return (
@@ -176,6 +182,10 @@ export default function ProductItem(props) {
 
         {isShow === true && (
           <div className="flex items-center gap-2 justify-center absolute top-0 left-0 w-full h-full bg-[rgba(0,0,0,0.4)] opacity-100 transition-opacity duration-300 z-[60] backdrop-blur-sm">
+            <IoCloseSharp
+              className="text-2xl text-white absolute top-2 right-2 cursor-pointer"
+              onClick={() => setIsShow(false)}
+            />
             {item?.size?.map((size, index) => (
               <span
                 key={index}
@@ -224,25 +234,38 @@ export default function ProductItem(props) {
 
         <div className="absolute top-3 right-3 flex flex-col items-center gap-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300 z-10">
           <Tooltip title="Add to wishlist">
-            <Button className="!p-2 !rounded-full w-[35px] h-[35px] !bg-white text-gray-600 hover:!bg-primary hover:text-white transition-all duration-300">
-              <IoMdHeartEmpty size={18} />
+            <Button
+              onClick={() => handleWishlist(item)}
+              className="!p-2 !rounded-full w-[35px] h-[35px] !bg-white text-gray-600 hover:!bg-red-300 hover:text-white transition-all duration-300"
+            >
+              {context.isInWishlist(item._id) ? (
+                <IoMdHeart className="text-red-500 drop-shadow-md" size={20} />
+              ) : (
+                <IoMdHeartEmpty
+                  className="text-gray-400 hover:text-red-500"
+                  size={20}
+                />
+              )}
             </Button>
           </Tooltip>
 
           <Tooltip title="Quick view">
             <Button
-              className="!p-2 !rounded-full w-[35px] h-[35px] !bg-white text-gray-600 hover:!bg-primary hover:text-white transition-all duration-300"
+              className="!p-2 !rounded-full w-[35px] h-[35px] !bg-white text-gray-600 hover:!bg-red-300 hover:text-white transition-all duration-300"
               onClick={() => context.handleOpen(true, item)}
             >
-              <IoExpandOutline size={18} />
+              <IoExpandOutline
+                size={18}
+                className="text-gray-400 hover:text-red-500"
+              />
             </Button>
           </Tooltip>
 
-          <Tooltip title="Compare">
+          {/* <Tooltip title="Compare">
             <Button className="!p-2 !rounded-full w-[35px] h-[35px] !bg-white text-gray-600 hover:!bg-primary hover:text-white transition-all duration-300">
               <IoGitCompareOutline size={18} />
             </Button>
-          </Tooltip>
+          </Tooltip> */}
         </div>
       </div>
 
@@ -272,7 +295,7 @@ export default function ProductItem(props) {
         {item?.rating !== undefined && (
           <Rating
             name="size-small"
-            defaultValue={item.rating}
+            value={item.rating}
             size="small"
             readOnly
             precision={0.5}
@@ -284,7 +307,7 @@ export default function ProductItem(props) {
           <div className="mt-2">
             <Button
               fullWidth
-              disabled={quantity < 1}
+              disabled={quantity < 1 || quantity > item.countInStock}
               onClick={() => Addtocart(item, context.userData?._id, quantity)}
               className="btn-org btn-border !normal-case py-2 rounded-lg transition duration-300"
               startIcon={<MdOutlineAddShoppingCart />}

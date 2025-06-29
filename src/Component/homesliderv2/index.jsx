@@ -4,6 +4,7 @@ import "swiper/css/navigation";
 import "swiper/css/effect-fade";
 import { Navigation, EffectFade, Pagination, Autoplay } from "swiper/modules";
 import { Button } from "@mui/material";
+import { Link } from "react-router-dom";
 
 export default function Homev2(props) {
   return (
@@ -45,9 +46,11 @@ export default function Homev2(props) {
                     </span>
                   </h5>
                   <div className="w-full opacity-0 relative -right-[100%] btn_">
-                    <Button className="!text-white !bg-primary">
-                      Shop Now
-                    </Button>
+                    <Link to={`/products?catId=${item._id}`}>
+                      <Button className="!text-white !bg-primary">
+                        Shop Now
+                      </Button>
+                    </Link>
                   </div>
                 </div>
               </div>

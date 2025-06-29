@@ -22,9 +22,12 @@ export default function CartPanel(props) {
     <>
       <div className=" scroll w-full max-h-[300px] overflow-y-scroll overflow-x-hidden py-3 px-4">
         {props.data.length === 0 ? (
-          <div className=" text-center text-[14px] font-[500] text-[#0000007a]">
-            No Item Found
-          </div>
+          <>
+            <div className=" text-center text-[14px] font-[500] text-[#0000007a]">
+              No Item Found
+              <img src="./../assets/emptycart.png" alt="" />
+            </div>
+          </>
         ) : (
           props.data.map((item) => {
             return (

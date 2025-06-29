@@ -33,7 +33,10 @@ export default function Blogitem(props) {
             .replace(/\s+\S*$/, "") +
             (props.item.description.length > 200 ? "..." : "")}
         </p>
-        <Link className="link font-[500] text-[15px] flex gap-1">
+        <Link
+          to={`/blog/${props.item._id}`}
+          className="link font-[500] text-[15px] flex gap-1"
+        >
           {" "}
           Read More
           <BsBoxArrowInUpRight />

@@ -30,8 +30,19 @@ import Myaccount from "./Pages/Myaccount";
 import Listitems from "./Component/Mylist/Listitems";
 import MyList from "./Component/Mylist";
 import Orders from "./Pages/Orders";
-import { fetchData, postData } from "./utils/api";
+import { deleteData, fetchData, postData } from "./utils/api";
 import Address from "./Pages/Myaccount/address";
+import Successorder from "./Pages/Orders/successorder";
+import Failedorder from "./Pages/Orders/failedorder";
+import SearchPage from "./Pages/SearchPage";
+import HelpCenter from "./Component/Otherpages/Helpcenter";
+import ContactUs from "./Component/Otherpages/ContactUs";
+import AboutUs from "./Component/Otherpages/Aboutus";
+import SecurePayments from "./Component/Otherpages/Securepayment";
+import LegalNotice from "./Component/Otherpages/legalnotice";
+import TermsAndConditions from "./Component/Otherpages/Termofuse";
+import DeliveryInfo from "./Component/Otherpages/Delivery";
+import BlogDetailsPage from "./Component/Otherpages/Blogdetails/blog.details";
 
 export const myContext = createContext();
 
@@ -43,10 +54,17 @@ function App() {
   const [maxWidth, setMaxWidth] = useState("lg");
   const [fullWidth, setFullWidth] = useState(true);
   const [openCartPanel, setopenCartPanel] = useState(false);
+  const [openaddressPanel, setopenaddressPanel] = useState(false);
+  const [addressmode, setaddressmode] = useState("add");
+  const [AddressId, setAddressId] = useState("");
+  const [searchData, setSearchData] = useState([]);
+
   const [islogin, setislogin] = useState(false);
   const [userData, setuserData] = useState(null);
   const [catData, setCatData] = useState([]);
   const [cartData, setCartData] = useState([]);
+  const [Addedlist, setAddedlist] = useState(false);
+  const [listData, setListData] = useState([]);
 
   const Alertbox = (status, msg) => {
     if (status === "success") {
@@ -65,35 +83,47 @@ function App() {
   const toggleCartPanel = (newOpen) => () => {
     setopenCartPanel(newOpen);
   };
+  const toggleaddressPanel = (newOpen) => () => {
+    if (newOpen === false) {
+      setaddressmode("add");
+    }
+    setopenaddressPanel(newOpen);
+  };
   useEffect(() => {
     const token = localStorage.getItem("accesstoken");
 
     if (token) {
       setislogin(true);
-      fetchData(`/api/user/userdetails`)
-        .then((res) => {
-          if (res.error) {
-            throw res;
-          }
-          setuserData(res.data);
-        })
-        .catch((err) => {
-          const message = err?.message || err?.response?.data?.message;
-
-          if (message === "You Are Not Logged In") {
-            localStorage.removeItem("accesstoken");
-            localStorage.removeItem("refreshToken");
-            Alertbox("error", "Your session has expired");
-            setislogin(false);
-          } else {
-            Alertbox("error", "An error occurred while fetching user data");
-          }
-        });
+      getuserDetails();
+      getCart();
+      getList();
     } else {
       setislogin(false);
     }
     getCart();
   }, []);
+
+  const getuserDetails = () => {
+    fetchData(`/api/user/userdetails`)
+      .then((res) => {
+        if (res.error) {
+          throw res;
+        }
+        setuserData(res.data);
+      })
+      .catch((err) => {
+        const message = err?.message || err?.response?.data?.message;
+
+        if (message === "You Are Not Logged In") {
+          localStorage.removeItem("accesstoken");
+          localStorage.removeItem("refreshToken");
+          Alertbox("error", "Your session has expired");
+          setislogin(false);
+        } else {
+          Alertbox("error", "An error occurred while fetching user data");
+        }
+      });
+  };
 
   const handleClickOpen = () => {
     setOpenProduct(true);
@@ -124,8 +154,8 @@ function App() {
     console.log("product.price:", product.price);
 
     const subTotal = Number(product.price) * Number(quantity);
-    console.log("subTotal:", subTotal); // Must NOT be null or NaN
-
+    // const countInStock = product.countInStock - Number(quantity);
+    console.log("subTotal:", subTotal);
     const Data = {
       ProductTitle: product.name,
       image: product?.images?.[0]?.url,
@@ -163,12 +193,86 @@ function App() {
     });
   };
 
+  const handleWishlist = (item) => {
+    if (!userData) {
+      Alertbox("error", "Please Login First");
+      return;
+    }
+
+    // Check if already in wishlist by searching listData
+    const existingItem = listData.find(
+      (wishlistItem) => wishlistItem.productId === item._id
+    );
+
+    if (existingItem) {
+      deleteData(`/api/mylist/delete/${existingItem._id}`).then((res) => {
+        if (res.error) {
+          Alertbox("error", res.message);
+        } else {
+          Alertbox("success", "Product removed from wishlist");
+          getList(); // Refresh list
+        }
+      });
+    } else {
+      // Item is not in wishlist — add it
+      const Data = {
+        productId: item._id,
+        userId: userData._id,
+        image: item?.images?.[0]?.url,
+        productTitle: item.name,
+        price: item.price,
+        rating: item.rating,
+        oldprice: item.oldprice,
+        brand: item.brand,
+        discount: item.discount,
+      };
+
+      postData("/api/mylist/add", Data).then((res) => {
+        if (res.error) {
+          Alertbox("error", res.message);
+        } else {
+          Alertbox("success", "Product added to wishlist");
+          getList(); // Refresh list
+        }
+      });
+    }
+  };
+  const isInWishlist = (productId) => {
+    return listData.some((item) => item.productId === productId);
+  };
+  const getList = () => {
+    fetchData(`/api/mylist/getList`).then((res) => {
+      if (res.error) {
+        Alertbox("error", res.message);
+      } else {
+        setListData(res.data);
+
+        console.log(res.data); // Use this instead of listData
+      }
+    });
+  };
+
+  useEffect(() => {
+    if (userData) {
+      getList();
+    }
+  }, [userData]);
+
   const values = {
     setOpenProduct,
     setopenCartPanel,
     openCartPanel,
+    openaddressPanel,
+    setopenaddressPanel,
+    toggleaddressPanel,
     toggleCartPanel,
     handleOpen,
+    handleClose,
+    getuserDetails,
+    addressmode,
+    setaddressmode,
+    AddressId,
+    setAddressId,
     Alertbox,
     islogin,
     AddtoCart,
@@ -180,6 +284,15 @@ function App() {
     cartData,
     setCartData,
     getCart,
+    handleWishlist,
+    listData,
+    setAddedlist,
+    isInWishlist,
+    Addedlist,
+    setListData,
+    getList,
+    searchData,
+    setSearchData,
   };
   return (
     <>
@@ -206,8 +319,40 @@ function App() {
             <Route path="/checkout" exact={true} element={<Checkout />} />
             <Route path="/myaccount" exact={true} element={<Myaccount />} />
             <Route path="/mylist" exact={true} element={<MyList />} />
-            <Route path="/orders" exact={true} element={<Orders />} />
+            <Route path="/myorders" exact={true} element={<Orders />} />
+            <Route
+              path="/orders/success"
+              exact={true}
+              element={<Successorder />}
+            />
+            <Route
+              path="/orders/failed"
+              exact={true}
+              element={<Failedorder />}
+            />
+
             <Route path="/address" exact={true} element={<Address />} />
+            <Route path="/search" exact={true} element={<SearchPage />} />
+            <Route path="/helpcenter" exact={true} element={<HelpCenter />} />
+            <Route path="/contactus" exact={true} element={<ContactUs />} />
+            <Route path="/Aboutus" exact={true} element={<AboutUs />} />
+            <Route
+              path="/securepayment"
+              exact={true}
+              element={<SecurePayments />}
+            />
+            <Route path="/legalnotice" exact={true} element={<LegalNotice />} />
+            <Route
+              path="/terms"
+              exact={true}
+              element={<TermsAndConditions />}
+            />
+            <Route path="/delivery" exact={true} element={<DeliveryInfo />} />
+            <Route
+              path="/blog/:id"
+              exact={true}
+              element={<BlogDetailsPage />}
+            />
           </Routes>
           <Footer />
 
@@ -229,11 +374,11 @@ function App() {
                   {" "}
                   <RiCloseLine />
                 </Button>
-                {openProduct.item.length !== 0 && (
+                {openProduct.item?.length !== 0 && (
                   <>
                     {" "}
                     <div className="col-1 w-[40%]">
-                      <Productzoom images={openProduct.item.images} />
+                      <Productzoom images={openProduct.item?.images} />
                     </div>
                     <div className="col-2 w-[60%] py-2 px-6 pr-1">
                       <ProductModal item={openProduct.item} />

@@ -100,11 +100,6 @@ export default function Myaccount() {
           setisLoading(false);
           context.Alertbox("success", res.message);
           console.log(res);
-          setformfield({
-            name: "",
-            email: "",
-            Mobile: "",
-          });
         } else {
           context.Alertbox("error", res.message);
           setisLoading(false);

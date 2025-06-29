@@ -22,6 +22,8 @@ import InnerImageZoom from "react-inner-image-zoom";
 import Reviews from "./reviews";
 import { useContext } from "react";
 import { myContext } from "../../App";
+
+import Qtybox from "../Qtybox";
 export default function ProductDetails() {
   const { id } = useParams();
   const [buttonindex, setbuttonindex] = useState(null);
@@ -33,15 +35,27 @@ export default function ProductDetails() {
   const [reviewsCount, setReviewsCount] = useState(0);
   const [relatedProducts, setrelatedProducts] = useState([]);
   const context = useContext(myContext);
+  const [quantity, setQuantity] = useState(1);
+  const [selectedTabSize, setSelectedTabSize] = useState(null);
+  const [selectedTabWeight, setSelectedTabWeight] = useState(null);
+  const [selectedTabRam, setSelectedTabRam] = useState(null);
+  const [activeTabs, setactiveTabs] = useState(null);
 
-  const handleclick = (index) => {
-    setbuttonindex(index);
+  const handleSelectQty = (qty) => {
+    setQuantity(qty);
   };
-  const handleclickram = (index) => {
-    setbuttonindex1(index);
+
+  const handleclick = (index, size) => {
+    setactiveTabs(index);
+    setSelectedTabSize(size);
   };
-  const handleclickweight = (index) => {
-    setbuttonindex2(index);
+  const handleclickram = (index, ram) => {
+    setactiveTabs(index);
+    setSelectedTabRam(ram);
+  };
+  const handleclickweight = (index, weight) => {
+    setactiveTabs(index);
+    setSelectedTabWeight(weight);
   };
   const reviewsRef = useRef();
   const usezoom1 = useRef();
@@ -80,7 +94,26 @@ export default function ProductDetails() {
     });
     setActiveTab(1);
   };
-
+  const Addtocart = (product, userId, quantity) => {
+    const productItems = {
+      ...product,
+      size: selectedTabSize,
+      weight: selectedTabWeight,
+      productRam: selectedTabRam,
+    };
+    if (activeTabs !== null) {
+      context?.AddtoCart(productItems, userId, quantity);
+      setactiveTabs(null);
+    } else {
+      if (productItems.size?.length !== 0) {
+        context.Alertbox("error", "Please select a Size to add to cart");
+      } else if (productItems.weight?.length !== 0) {
+        context.Alertbox("error", "Please select a Weight to add to cart");
+      } else if (productItems.productRam?.length !== 0) {
+        context.Alertbox("error", "Please select a Ram to add to cart");
+      }
+    }
+  };
   return (
     <>
       <div className="py-5">
@@ -248,69 +281,77 @@ export default function ProductDetails() {
                 </p>
               </div>
               {/* Size Selection */}
-              <div className="flex items-center mb-5">
-                <span className="text-base font-medium">Size:</span>
-                <div className="flex items-center gap-2 pl-4">
-                  {product?.size?.map((size, index) => (
-                    <Button
-                      key={index}
-                      variant="outlined"
-                      size="small"
-                      className={`!rounded-full !px-4 !py-1 ${
-                        buttonindex === index
-                          ? "!bg-primary !text-white"
-                          : "!text-gray-700"
-                      }`}
-                      onClick={() => handleclick(index)}
-                    >
-                      {size}
-                    </Button>
-                  ))}
+              {product?.size.length > 0 && (
+                <div className="flex items-center mb-5">
+                  <span className="text-base font-medium">Size:</span>
+                  <div className="flex items-center gap-2 pl-4">
+                    {product?.size?.map((size, index) => (
+                      <Button
+                        key={index}
+                        variant="outlined"
+                        size="small"
+                        className={`!rounded-full !px-4 !py-1 ${
+                          activeTabs === index
+                            ? "!bg-primary !text-white"
+                            : "!text-gray-700"
+                        }`}
+                        onClick={() => handleclick(index, size)}
+                      >
+                        {size}
+                      </Button>
+                    ))}
+                  </div>
                 </div>
-              </div>
-              <div className="flex items-center mb-5">
-                <span className="text-base font-medium">Ram:</span>
-                <div className="flex items-center gap-2 pl-4">
-                  {product?.productRam?.map((ram, index) => (
-                    <Button
-                      key={index}
-                      variant="outlined"
-                      size="small"
-                      className={`!rounded-full !px-4 !py-1 ${
-                        buttonindex1 === index
-                          ? "!bg-primary !text-white"
-                          : "!text-gray-700"
-                      }`}
-                      onClick={() => handleclickram(index)}
-                    >
-                      {ram}
-                    </Button>
-                  ))}
+              )}
+              {product?.productRam.length > 0 && (
+                <div className="flex items-center mb-5">
+                  <span className="text-base font-medium">Ram:</span>
+                  <div className="flex items-center gap-2 pl-4">
+                    {product?.productRam?.map((ram, index) => (
+                      <Button
+                        key={index}
+                        variant="outlined"
+                        size="small"
+                        className={`!rounded-full !px-4 !py-1 ${
+                          activeTabs === index
+                            ? "!bg-primary !text-white"
+                            : "!text-gray-700"
+                        }`}
+                        onClick={() => handleclickram(index, ram)}
+                      >
+                        {ram}
+                      </Button>
+                    ))}
+                  </div>
                 </div>
-              </div>
-              <div className="flex items-center mb-5">
-                <span className="text-base font-medium">Weight:</span>
-                <div className="flex items-center gap-2 pl-4">
-                  {product?.productweight?.map((weight, index) => (
-                    <Button
-                      key={index}
-                      variant="outlined"
-                      size="small"
-                      className={`!rounded-full !px-4 !py-1 ${
-                        buttonindex2 === index
-                          ? "!bg-primary !text-white"
-                          : "!text-gray-700"
-                      }`}
-                      onClick={() => handleclickweight(index)}
-                    >
-                      {weight}
-                    </Button>
-                  ))}
+              )}
+              {product?.productweight.length > 0 && (
+                <div className="flex items-center mb-5">
+                  <span className="text-base font-medium">Weight:</span>
+                  <div className="flex items-center gap-2 pl-4">
+                    {product?.productweight?.map((weight, index) => (
+                      <Button
+                        key={index}
+                        variant="outlined"
+                        size="small"
+                        className={`!rounded-full !px-4 !py-1 ${
+                          activeTabs === index
+                            ? "!bg-primary !text-white"
+                            : "!text-gray-700"
+                        }`}
+                        onClick={() => handleclickweight(index, weight)}
+                      >
+                        {weight}
+                      </Button>
+                    ))}
+                  </div>
                 </div>
-              </div>
+              )}
 
-              {/* Quantity & Add to Cart */}
               <div className="flex items-center mb-5">
+                <div className="flex items-center gap-2 w-[80px]">
+                  <Qtybox handleSelectQty={handleSelectQty} />
+                </div>
                 <Button
                   variant="contained"
                   onClick={() =>

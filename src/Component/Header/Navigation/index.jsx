@@ -46,7 +46,7 @@ export default function Navigation() {
                   to="/"
                   className="link transition  text-[13px] font-[500]"
                 >
-                  <Button className="link transiton !py-4  font-[500]">
+                  <Button className="link transiton hover:!bg-transparent  !py-4  font-[500]">
                     Home
                   </Button>
                 </Link>
@@ -59,7 +59,7 @@ export default function Navigation() {
                         to={`/products?catId=${item._id}`}
                         className="link transition text-[13px] font-[500] hover:text-primary"
                       >
-                        <Button className="!py-4 font-[500] !text-current hover:!bg-gray-100 w-full text-left">
+                        <Button className="!py-4 font-[500] !text-current hover:!bg-transparent w-full text-left">
                           {item.name}
                         </Button>
                       </Link>

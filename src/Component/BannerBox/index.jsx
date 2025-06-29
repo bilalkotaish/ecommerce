@@ -17,7 +17,12 @@ export default function Bannerbox(props) {
           {props.item?.price}$
         </span>
         <div>
-          <Link className="link text-[16px] font-[500]">Shop Now</Link>
+          <Link
+            to={`/products?catId=${props.item?._id}`}
+            className="link text-[16px] font-[500]"
+          >
+            Shop Now
+          </Link>
         </div>
       </div>
     </div>

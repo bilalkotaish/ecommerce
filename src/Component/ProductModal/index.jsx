@@ -5,23 +5,34 @@ import Rating from "@mui/material/Rating";
 import { Button } from "@mui/material";
 import { Link } from "react-router-dom";
 import Qtybox from "../../Component/Qtybox";
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { CiShare1 } from "react-icons/ci";
 import { fetchData } from "../../utils/api";
+import { myContext } from "../../App";
 
 export default function ProductModal(props) {
-  const [buttonindex, setbuttonindex] = useState(null);
-  const [buttonindex1, setbuttonindex1] = useState(null);
-  const [buttonindex2, setbuttonindex2] = useState(null);
+  const [selectedTabSize, setSelectedTabSize] = useState(null);
+  const [selectedTabWeight, setSelectedTabWeight] = useState(null);
+  const [selectedTabRam, setSelectedTabRam] = useState(null);
+  const [activeTabs, setactiveTabs] = useState(null);
+  const context = useContext(myContext);
+  const [quantity, setQuantity] = useState(1);
 
-  const handleclick = (index) => {
-    setbuttonindex(index);
+  const handleSelectQty = (qty) => {
+    setQuantity(qty);
   };
-  const handleclickram = (index) => {
-    setbuttonindex1(index);
+
+  const handleclick = (index, size) => {
+    setactiveTabs(index);
+    setSelectedTabSize(size);
   };
-  const handleclickweight = (index) => {
-    setbuttonindex2(index);
+  const handleclickram = (index, ram) => {
+    setactiveTabs(index);
+    setSelectedTabRam(ram);
+  };
+  const handleclickweight = (index, weight) => {
+    setactiveTabs(index);
+    setSelectedTabWeight(weight);
   };
 
   const [ReviewsCount, setReviewsCount] = useState(0);
@@ -39,6 +50,27 @@ export default function ProductModal(props) {
         setReviewsCount(0);
       });
   }, [props.item?._id]);
+  const Addtocart = (product, userId, quantity) => {
+    const productItems = {
+      ...product,
+      size: selectedTabSize,
+      weight: selectedTabWeight,
+      productRam: selectedTabRam,
+    };
+    if (activeTabs !== null) {
+      context?.AddtoCart(productItems, userId, quantity);
+      setactiveTabs(null);
+      context.handleClose();
+    } else {
+      if (productItems.size?.length !== 0) {
+        context.Alertbox("error", "Please select a Size to add to cart");
+      } else if (productItems.weight?.length !== 0) {
+        context.Alertbox("error", "Please select a Weight to add to cart");
+      } else if (productItems.productRam?.length !== 0) {
+        context.Alertbox("error", "Please select a Ram to add to cart");
+      }
+    }
+  };
 
   return (
     <div className="content w-full md:w-[100%] px-4 md:px-8 lg:px-12">
@@ -114,7 +146,74 @@ export default function ProductModal(props) {
       </div>
 
       {/* Size Selection */}
-      <div className="flex items-center mb-5">
+
+      {props.item?.size?.length > 0 && (
+        <div className="flex items-center mb-5">
+          <span className="text-base font-medium">Size:</span>
+          <div className="flex items-center gap-2 pl-4">
+            {props.item?.size?.map((size, index) => (
+              <Button
+                key={index}
+                variant="outlined"
+                size="small"
+                className={`!rounded-full !px-4 !py-1 ${
+                  activeTabs === index
+                    ? "!bg-primary !text-white"
+                    : "!text-gray-700"
+                }`}
+                onClick={() => handleclick(index, size)}
+              >
+                {size}
+              </Button>
+            ))}
+          </div>
+        </div>
+      )}
+      {props.item?.productRam?.length > 0 && (
+        <div className="flex items-center mb-5">
+          <span className="text-base font-medium">Ram:</span>
+          <div className="flex items-center gap-2 pl-4">
+            {props.item?.productRam?.map((ram, index) => (
+              <Button
+                key={index}
+                variant="outlined"
+                size="small"
+                className={`!rounded-full !px-4 !py-1 ${
+                  activeTabs === index
+                    ? "!bg-primary !text-white"
+                    : "!text-gray-700"
+                }`}
+                onClick={() => handleclickram(index, ram)}
+              >
+                {ram}
+              </Button>
+            ))}
+          </div>
+        </div>
+      )}
+      {props.item?.productweight?.length > 0 && (
+        <div className="flex items-center mb-5">
+          <span className="text-base font-medium">Weight:</span>
+          <div className="flex items-center gap-2 pl-4">
+            {props.item?.productweight?.map((weight, index) => (
+              <Button
+                key={index}
+                variant="outlined"
+                size="small"
+                className={`!rounded-full !px-4 !py-1 ${
+                  activeTabs === index
+                    ? "!bg-primary !text-white"
+                    : "!text-gray-700"
+                }`}
+                onClick={() => handleclickweight(index, weight)}
+              >
+                {weight}
+              </Button>
+            ))}
+          </div>
+        </div>
+      )}
+      {/* <div className="flex items-center mb-5">
         <span className="text-base font-medium">Size:</span>
         <div className="flex items-center gap-2 pl-4">
           {props.item?.size?.map((size, index) => (
@@ -173,15 +272,16 @@ export default function ProductModal(props) {
             </Button>
           ))}
         </div>
-      </div>
+      </div> */}
 
       {/* Quantity & Add to Cart */}
       <div className="flex items-center mb-5">
-        <div className="w-[70px]">
-          <Qtybox />
+        <div className="flex items-center gap-2 w-[80px]">
+          <Qtybox handleSelectQty={handleSelectQty} />
         </div>
         <Button
           variant="contained"
+          onClick={() => Addtocart(props.item, context.userData?._id, quantity)}
           className="!bg-primary !text-white flex items-center gap-2 !ml-4 !px-4 !py-2 hover:!bg-primary-dark whitespace-nowrap"
         >
           <MdOutlineAddShoppingCart className="text-sm" />

@@ -3,17 +3,20 @@ import { Button } from "@mui/material";
 import { IoIosArrowUp } from "react-icons/io";
 import { IoIosArrowDown } from "react-icons/io";
 import { IoMdHeartEmpty } from "react-icons/io";
-export default function Qtybox() {
+export default function Qtybox(props) {
   const [qtyValue, setqtyValue] = useState(1);
 
   const plusqty = () => {
     setqtyValue(qtyValue + 1);
+    props.handleSelectQty(qtyValue + 1);
   };
   const minusqty = () => {
     if (qtyValue === 1) {
       setqtyValue(1);
+      props.handleSelectQty(1);
     } else {
       setqtyValue(qtyValue - 1);
+      props.handleSelectQty(qtyValue - 1);
     }
   };
 

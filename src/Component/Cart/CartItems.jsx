@@ -70,14 +70,14 @@ export default function CartItems(props) {
 
     setselectedqty(updatedQty);
 
-    const previousQty = props.data?.quantity || 0;
-    const qtyDiff = updatedQty - previousQty;
-    const newStock = context.cartData[0]?.countInStock - qtyDiff;
+    // const previousQty = props.data?.quantity || 0;
+    // const qtyDiff = updatedQty - previousQty;
+    // const newStock = context.cartData[0]?.countInStock - qtyDiff;
 
     editData(`/api/cart/updateCart`, {
       _id: props.data._id,
       qty: updatedQty,
-      countInStock: newStock,
+      // countInStock: newStock,
       ...productItems,
     }).then((res) => {
       if (res.error) {

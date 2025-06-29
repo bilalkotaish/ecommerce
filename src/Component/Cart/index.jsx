@@ -6,6 +6,7 @@ import { IoMdClose } from "react-icons/io";
 import CartItems from "./CartItems";
 import { useContext } from "react";
 import { myContext } from "../../App";
+import { Link } from "react-router-dom";
 export default function Cart() {
   const context = useContext(myContext);
   window.scrollTo(0, 0);
@@ -27,9 +28,22 @@ export default function Cart() {
               </p>
             </div>
             {context.cartData.length === 0 ? (
-              <div className=" text-center text-[14px] font-[500] text-[#0000007a]">
-                No Item Found
-              </div>
+              <>
+                <div className="flex flex-col items-center justify-center h-[300px] ">
+                  <img src="src\assets\emptycart.png" alt="" />
+                  <h4 className="text-[18px] mb-2 mt-2 font-[500]">
+                    Your Cart is Empty
+                  </h4>
+                  <Link to="/">
+                    <Button
+                      onClick={context.toggleCartPanel(false)}
+                      className="pt-8 !bg-blue-400 !text-white hover:!bg-blue-600"
+                    >
+                      Continue Shopping
+                    </Button>{" "}
+                  </Link>
+                </div>
+              </>
             ) : (
               context.cartData.map((item) => {
                 return <CartItems size="S" qty={item.quantity} data={item} />;
@@ -39,7 +53,7 @@ export default function Cart() {
         </div>
 
         <div className="rightpart w-[30%]  ">
-          <div className="shadow-md rounded-md bg-white p-5">
+          <div className="shadow-md rounded-md bg-white p-5 sticky top-10 ">
             <h3 className="pb-3"> Cart Totals</h3>
             <hr />
             <div className="space-y-2 pb-4">
